@@ -1,0 +1,212 @@
+#
+# Description: Documentation on how to glue the HTTPD (and related) to an 
+#			   already existing environment that is not the Kernel Library.
+# Version:     $Id: Glue 287 2004-08-07 14:53:35Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+Note: Depending on how long it's been since I updated the documentation:
+      PATHS MIGHT DIFFER SLIGHTLY!
+
+In order to glue the Jorinde application suite to your own environment you 
+need to change a few settings and possibly write a middle layer that 
+translate information from your environment to information used by Jorinde. 
+Everything should work fine under a vanilly DGD Kernel Library (eg, no 
+custom auto-object or similar is needed).
+
+Alright, I realize this might look like a lot. Take my word for it, it isn't.
+I'm just being very verbose. It's a matter of adding 4-5 lines of code and 
+changing 3 configuration options in an xml-file.
+
+Do not change ANY code in the code-base to get this to work with your 
+environment, everything should be done using hooks. If you DO change the
+code-base you will have trouble if you want to grab a new update of Jorinde. 
+However, suggestions on improvements, or better yet, patches, to the code-base
+is always welcome. Send them to 'joakim at romland dot net' and I'll put them
+into the base if they're useful.
+
+If you are using trying to get this to work on IgorMUD (or possibly other 
+supported environments) the only file you will need to change is 
+/usr/Jorinde/open/jorinde.h. You need to change the 'USE_GLUE_FOR_XXX' to 
+another supported environment (list of those is later on in that file).
+
+Now, to the point. I'd say there are two scenarios for "writing a glue": 
+
+1.	Your environment is NOT built on top of the Kernel Library:
+	Well, you will have to do some work in order to get this to work,
+	especially out of a security perspective. The first thing you should 
+	do is read the "Security" documentation in this directory -- and then 
+	you should follow the directions in "Scenario 2".
+	
+	But basically, you only need things any environment would need: Daemons 
+	for authorization, authentication, error-handling and logging. 
+
+	But, most importantly, you will need some way to allow the httpd's 
+	connection manager (/usr/System/httpd/binaryd.c) to assign user-objects 
+	with an incoming connection. In the Kernel Library this is initialized by 
+	calling set_binary_manager() in /kernel/sys/userd.c with arguments 
+	port and object; object will then take over when a new connection 
+	arrives. You can override which userd it should use by changing the 
+	define USERD. Right now there is no way to configure this, you will
+	have to change that value in the source.
+
+	If you need to change any Jorinde code in order to get it to work with 
+	your environment; drop me a mail stating what these changes are, it 
+	might be an oversight by me and if it is I will add it to the base-code.
+	This will make your life easier since you don't have to patch the same 
+	code every time you grab a new update of the Jorinde code.
+
+
+2.	Your environment is built on top of the Kernel Library:
+	Good. You won't need to write a glue per se, you just need to add a few
+	lines of code and change a few configuration options. The HTTPD needs 
+	to have a few hooks into your environment:
+
+	- Runtime vs Compile time configuration
+		Certain things cannot be configured during runtime, such tweaks 
+		should be done in /usr/Jorinde/jorinde.h. This file contains basic
+		paths and similar things. In many cases this is a good way for 
+		solving differences in behaviour between your environment and the 
+		Kernel Library.
+
+	- Initialization
+		In order to for Jorinde to set everything up on a startup you will
+		need to add the following to /usr/System/initd.c's create()
+			if(!find_object("httpd/initd")) compile_object("httpd/initd");
+
+	- Configuration files
+		You don't want to change the original configuration files; so change
+		/usr/Jorinde/jorinde.h to make JORINDE_HTTPD_CONFIG_DIR point to a
+		directory where you want to store your configuration 
+		(/usr/Jorinde/config/ would be okay for instance). Then copy the
+		xml files in the original directory to your new location. Now you
+		have control over the webserver and related. The entry point for
+		the httpd is always JORINDE_HTTPD_CONFIG_DIR/server.xml
+
+	- Authorization
+		/usr/Jorinde/httpd/sys/authorize.c needs permission to query whether a
+		user is allowed to access a file. If you only depend on the Kernel
+		Library's access permissions you can use the default configuration.
+
+		Change the server.xml configuration file to point to your 
+		authorization daemon: /server/plugins/authorization/plugin/program/
+
+		Sypnosis:
+			int access(string name, string file, int type)
+
+		Arguments:
+			Jorinde will call access() querying whether user (name) has
+			access (type, see below) to file (file).
+
+			Type can be one of the following (Kernel Library's default):
+				READ_ACCESS    1   /* read access only */
+				WRITE_ACCESS   2   /* read + write */
+				FULL_ACCESS    3   /* read + write + access granting */
+
+		Return:
+			TRUE (1) if user had that access, FALSE (0) otherwise.
+
+		Example:
+			The file you will be replacing with your own is 
+			/usr/System/httpd/accessd.c, but do NOT change that file or
+			overwrite it. If you get a new code-update of Jorinde it WILL
+			be overwritten! It's a working example if you use Kernel Library's
+			access-handler.
+
+
+	- Authentication
+		Jorinde supports Basic and Digest authentication. If you want to use
+		Basic authentication Jorinde will need permission to verify an 
+		existing user's passwords and also to verify whether a user exists.
+
+		The file that needs permission to verify a user's password is 
+		/usr/Jorinde/httpd/lib/authen_basic.c.
+
+		TODO! Details on Digest authentication!
+
+		In the case of Digest authentication there is as far as I can see
+		no way to use crypt()'ed passwords, they will have to be md5-hashed
+		with a magic number which means that you will have your users set
+		a new password which can be used with the DAV/HTTP server if they
+		want that. This is actually recommended seeing as Digest authentication
+		is a lot stronger than Basic (which is plain-text). The Digest
+		implementation is only 90% done at the time this was written. I'm
+		still pondering whether I can use the crypt()'ed passwords in some
+		way. We'll see. In any case, what you'd need in your environment
+		later on is something that enables a user to set their HTTP/DAV
+		password (you might even want to force them to use the same password
+		for Basic, that's up to you).
+
+		Change the server.xml configuration file to point to your 
+		authentication daemon: /server/plugins/authentication/plugin/program/
+
+
+	- Error handler
+		Jorinde's plugin for Inline LPC on webpages will want to know when
+		an error has occured and format that error nicely in HTML. This will
+		be a problem since you already have an error-handler defined.
+
+		Luckily, Jorinde is shipped with its own error-handler that supports
+		multiple handlers. It will forward the error to one or more handlers 
+		based on the location (path) where the error occured. You can find 
+		the code here: /usr/Jorinde/httpd/sys/errord.c (HTTP_ERRORD).
+
+		Jorinde's error-handler should sit directly on top of the Kernel 
+		Library and all other handlers should register with that one. So
+		remove the registration of your current error-handler and replace
+		with something like this (usr/System/initd.c's create() is a good 
+		place to add it to):
+
+			object errd;
+			errd = find_object(HTTP_ERRORD); /* /usr/Jorinde/httpd/sys/errord */
+			/* arguments:
+			 * string filepath: 
+			 *		Errors will be forwarded to object obj if the file that 
+			 *		caused the error is located below this path.
+			 *
+			 * object obj
+			 *		Jorinde's error handler will call this object when an
+			 *		error has occured. This is typically your current 
+			 *		errorhandler. If this argument is nil, a text version
+			 *		of the error will be forwarded to driver->message()
+			 *
+			 * mixed extra
+			 *		Data of your choice which will be added as an extra
+			 *		argument to the call to your error handler. If this
+			 *		argument is omitted (or nil), the Kernel Library 
+			 *		sypnosis for forwarding errors will be used.
+			 */
+			errd->add_hook("/", nil, nil); /*all errors to driver->message()*/
+
+		If you don't want to replace your error-handler, that's fine too,
+		the only thing that will (or will not) happen is that you will not 
+		see any errors in the web-browser.
+
+
+	- On-screen logging (stdout)
+		Jorinde will want permission to output data to stdout (for debugging
+		and early errors and similar).
+
+		All on-screen logging goes through /usr/System/httpd/syslogd.c which
+		is configurable in server.xml.
+
+		Change the server.xml configuration file to point to your 
+		log-daemon: /server/plugins/loghandler/plugin/program/
+
+		Sypnosis:
+			void syslog(mixed msg)
+
+		Arguments:
+			It must be able to deal with all datatypes (even if you just
+			want to discard everything that's not a string).
+
+		Example:
+			See /usr/System/httpd/syslogd.c for a working example.
+
+	This should bring your environment to a state where the server will
+	run; there are plenty more hooks that you can added/mofidied to further
+	extend the server.
+
+
+Cheers,
+Joakim Romland, 11-jun-2004

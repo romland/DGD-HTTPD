@@ -1,0 +1,42 @@
+#
+# Description: Security (documentation).
+# Version:     $Id: Security 210 2004-06-15 08:27:28Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+              A couple of important things to keep in mind!
+
+1.	Granting write-access to httpd's home means that you trust that programmer
+	to get access to all user's passwords. They are available practically in
+	clear-text during authentication (at least in Basic authentication). They
+	can do a whole heap of other nasty things as well since the httpd has its
+	own user-object.
+
+	Typically you would never grant anyone access to httpd-home, you'd grant
+	them / (global) access instead.
+
+2.	In the case of moving this to a security model different from the one
+	enforced by the Kernel Library, do keep in mind that the following is
+	taken for granted in all code:
+
+	You cannot call functions in a library's master-object (a library is
+	a library if it recides in a lib directory). Nor can you clone libraries
+	directly.
+
+	For more information on the Kernel Library's restrictions see section
+	"Restrictions on use of objects" in <dgd/mud/doc/kernel/overview>.
+	in fact, you might want to read this entire file since it IS a good
+	idea to use the Kernel Library as a base for your environment.
+
+3.	Anonymous read-access is granted to /usr/www/ through the object
+	/usr/www/access.c. This is not optimal seeing as it would be better
+	to allow read-access in the accessd right away.
+
+4.	Don't be fooled by this brief file. There ARE most likely plenty of
+    other security holes in this application. Use at your own risk.
+	But do drop me a note when you run into them so that they get fixed. :)
+
+5.	WebDAV issues (this section is TODO)
+
+6.	Verify that the code I(!) put in your(!) ~System directory is fine
+	with you!

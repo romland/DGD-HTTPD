@@ -1,0 +1,155 @@
+# include "../open/jorinde.h"
+# include "../include/index.h"
+
+inherit ptr INDEX_LIB_PTR;
+inherit LIB_HTTP_STRING;
+
+# define SECURE() (sscanf(previous_program(), JORINDE_INDEX+"%*s") == 1)
+
+mapping index;
+
+static void create(varargs int clone)
+{
+	index = ([ ]);
+	ptr::create();
+}
+
+/* returns 1 if a new word was added, 0 otherwise */
+int add_word(string word, int fileid, int *indices, int force )
+{
+	string tmpword;
+	int wlen, ret;
+	object ob;
+
+	if(!SECURE()) {
+		error("illegal call");
+	}
+
+	(INDEXD)->called_add_word();
+
+	if((wlen = strlen(word)) > 1) {
+		if(force) {
+			/* hint that we should create an index for char at this level */
+#if DEBUG_UNIQUE
+			SYSLOG("forcing index: '" + word + "'\n");
+#endif
+			ob = (INDEXD)->new_index();
+			
+		} else if(!(ob = index[word[0..0]])) {
+			/* New unique suffix object. Gained: ((strlen(word)-2) objects) */
+#if DEBUG_UNIQUE
+			SYSLOG("New unique suffix for " + word + "\n");
+#endif
+			ob = new_object(INDEX_UNIQUE);
+
+		} else if(ob && 
+				sscanf(object_name(ob), INDEX_UNIQUE+"#%*s") == 1 && 
+				(tmpword = ob->get_word()) != word[1..] ) {
+			/*
+			 * we have a 'shortcut' that needs to be expanded at this level.
+			 */
+			object tmp;
+			int *fileids;
+			int sz, i;
+
+			(INDEXD)->moved_word();
+
+			/* the suffix is no longer unique, overwrite with an index */
+			tmp = (INDEXD)->new_index();
+
+			/* fetch data from unique and feed to new index */
+			fileids = ob->get_pointers();
+#if 1
+#if DEBUG_UNIQUE
+			SYSLOG("Move unique '"+tmpword +"' (due to " + word[1..]+")\n");
+#endif
+			sz = ((sz=strlen(tmpword)) > (wlen-1)) ? (wlen-1) : sz;
+			for(i = 0; i < sz; i++) {
+#if DEBUG_UNIQUE
+				SYSLOG("'" + tmpword[0..i] + "' = '" + word[1..(i+1)] + "'?\n");
+#endif
+				if(!starts_with(tmpword[0..i], word[1..(i+1)])) {
+					break;
+				}
+			}
+			if(i > 1) {
+				force = i-1;
+			}
+#if DEBUG_UNIQUE
+			SYSLOG("match til: '" + tmpword[0..(i-1)]+"' force: "+force+"\n");
+#endif
+#endif 
+			sz = sizeof(fileids);
+			for(i = 0; i < sz; i++) {
+				tmp->add_word(tmpword, fileids[i], get_indices(fileids[i]), force );
+			}
+			ob = tmp;
+		}
+	}
+
+#if DEBUG_UNIQUE
+	SYSLOG("adding: " + word + "\n");
+#endif
+
+	/* now, proceed with indexing the word we came here to do */
+	if(wlen > 1) {
+		/* This suffix gets fed further down the tree */
+		ret = ob->add_word( word[1..], fileid, indices, (force?--force:0) );
+	} else {
+		/* This is this suffix's end-station */
+		if(!has_pointers()) {
+			/* This is a new word, then */
+			ret = 1;
+		}
+#if DEBUG_UNIQUE
+		SYSLOG("hit: " + word + "\n");
+#endif
+		add_pointer( fileid, indices );
+	}
+
+	index[word[0..0]] = ob;
+
+	return ret;
+}
+
+void output_index()
+{
+	int i;
+	string *arr;
+
+	arr = map_indices(index);
+
+	SYSLOG("Sub level index [" + sizeof(arr) + "]:\n");
+	for(i = 0; i < sizeof(arr); i++) {
+		SYSLOG("\t" + arr[i] + " : " + object_name(index[arr[i]]) + "\n");
+	}
+}
+
+int *get_hits(string word)
+{
+	if(!SECURE()) {
+		error("illegal call");
+	}
+
+	if(strlen(word) > 1) {
+		object ob;
+		if((ob = index[word[0..0]])) {
+#if DEBUG_UNIQUE
+			SYSLOG("traversing '" + word[0..0] + "'...\n");
+#endif
+			return ob->get_hits( word[1..] );
+		} else {
+#if DEBUG_UNIQUE
+			SYSLOG("no hits for " + word + "...\n");
+			output_index();
+#endif
+			return ({ });
+		}
+	} else {
+#if DEBUG_UNIQUE
+		SYSLOG("hit...\n");
+#endif
+		return get_pointers();
+	}
+}
+

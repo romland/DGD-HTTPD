@@ -1,0 +1,223 @@
+# include "../open/jorinde.h"
+# include "../include/index.h"
+
+inherit ptr INDEX_LIB_PTR;
+
+# define SECURE() (sscanf(previous_program(), JORINDE_INDEX+"%*s") == 1)
+
+/* BEFORE: /doc/efun/
+ * Aug  9 13:04:53 ** Index complete:
+ * Aug  9 13:04:53 **        file count: 19
+ * Aug  9 13:04:53 **      folder count: 1
+ * Aug  9 13:04:53 **        word count: 1762
+ * Aug  9 13:04:53 ** unique word count: 295
+ * Aug  9 13:04:53 **        byte count: 11787
+ * Aug  9 13:04:53 **   bad sized words: 83
+ * Aug  9 13:04:53 **      broken words: 1
+ * Aug  9 13:04:53 ** fileword ob count: 0
+ * Aug  9 13:04:53 **    index ob count: 1230
+ * Aug  9 13:04:53 **    add word calls: 5538
+ * Aug  9 13:04:53 **        total cost: 2,784,613
+ * Aug  9 13:04:53 **  avg. word length: 5
+ *
+ * AFTER:
+ * Aug  9 15:50:17 ** Index complete: /doc/efun/
+ * Aug  9 15:50:17 **        file count: 19
+ * Aug  9 15:50:17 **      folder count: 1
+ * Aug  9 15:50:17 **        word count: 1450
+ * Aug  9 15:50:17 ** unique word count: 517
+ * Aug  9 15:50:17 **        byte count: 11787
+ * Aug  9 15:50:17 **   bad sized words: 395
+ * Aug  9 15:50:17 **      broken words: 1
+ * Aug  9 15:50:17 ** fileword ob count: 0
+ * Aug  9 15:50:17 **    index ob count: 440
+ * Aug  9 15:50:17 **    add word calls: 4086
+ * Aug  9 15:50:17 **        total cost: 2,304,917
+ * Aug  9 15:50:17 **  avg. word length: 5
+ *
+ * AFTER WITH LESS MOVING (due to bug): /doc/efun/
+ * Aug  9 16:14:45 ** Index complete:
+ * Aug  9 16:14:45 **        file count: 19
+ * Aug  9 16:14:45 **      folder count: 1
+ * Aug  9 16:14:45 **        word count: 1450
+ * Aug  9 16:14:45 ** unique word count: 388
+ * Aug  9 16:14:45 **        byte count: 11787
+ * Aug  9 16:14:45 **   bad sized words: 395
+ * Aug  9 16:14:45 **      broken words: 1
+ * Aug  9 16:14:45 ** fileword ob count: 0
+ * Aug  9 16:14:45 **    index ob count: 250
+ * Aug  9 16:14:45 **    add word calls: 3239
+ * Aug  9 16:14:45 **        total cost: 2,008,270
+ * Aug  9 16:14:45 **  avg. word length: 5
+ *
+ * WITH MORE OPTIMIZATION IN indexd: /doc/efun/
+ * Aug  9 17:06:23 ** Index complete:
+ * Aug  9 17:06:23 **        file count: 19
+ * Aug  9 17:06:23 **      folder count: 1
+ * Aug  9 17:06:23 **        word count: 1451
+ * Aug  9 17:06:23 ** unique word count: 388
+ * Aug  9 17:06:23 **        byte count: 11787
+ * Aug  9 17:06:23 **   bad sized words: 395
+ * Aug  9 17:06:23 **      broken words: 0
+ * Aug  9 17:06:23 ** fileword ob count: 0
+ * Aug  9 17:06:23 **    index ob count: 250
+ * Aug  9 17:06:23 **    add word calls: 3239
+ * Aug  9 17:06:23 **        total cost: 1,984,872
+ * Aug  9 17:06:23 **  avg. word length: 5
+ *
+ * AFTER WITH MORE FILES: /doc/
+ * Aug  9 15:55:35 **        file count: 899
+ * Aug  9 15:55:35 **      folder count: 49
+ * Aug  9 15:55:35 **        word count: 134376
+ * Aug  9 15:55:35 ** unique word count: 24899
+ * Aug  9 15:55:35 **        byte count: 1143423
+ * Aug  9 15:55:35 **   bad sized words: 43574
+ * Aug  9 15:55:35 **      broken words: 212
+ * Aug  9 15:55:35 ** fileword ob count: 0
+ * Aug  9 15:55:35 **    index ob count: 15415
+ * Aug  9 15:55:35 **    add word calls: 331604
+ * Aug  9 15:55:35 **        total cost: 174,977,689
+ * Aug  9 15:55:35 **  avg. word length: 5
+ * 
+ * AFTER WITH MORE FILES and bugfix: /doc/
+ * Aug  9 16:17:36 ** Index complete:
+ * Aug  9 16:17:36 **        file count: 899
+ * Aug  9 16:17:36 **      folder count: 49
+ * Aug  9 16:17:36 **        word count: 134376
+ * Aug  9 16:17:36 ** unique word count: 21269
+ * Aug  9 16:17:36 **        byte count: 1143423
+ * Aug  9 16:17:36 **   bad sized words: 43574
+ * Aug  9 16:17:36 **      broken words: 212
+ * Aug  9 16:17:36 ** fileword ob count: 0
+ * Aug  9 16:17:36 **    index ob count: 9638
+ * Aug  9 16:17:36 **    add word calls: 306646
+ * Aug  9 16:17:36 **        total cost: 165,789,815
+ * Aug  9 16:17:36 **  avg. word length: 5
+ */
+
+mapping index;
+
+static void create(varargs int clone)
+{
+	index = ([ ]);
+	ptr::create();
+}
+
+/* returns 1 if a new word was added, 0 otherwise */
+int add_word(string word, int fileid, int *indices)
+{
+	string tmpword;
+	int wlen, ret;
+	object ob;
+
+	if(!SECURE()) {
+		error("illegal call");
+	}
+
+	(INDEXD)->called_add_word();
+
+	if((wlen = strlen(word)) > 1) {
+		if(!(ob = index[word[0..0]])) {
+			/*
+			 * New unique suffix object. Gained: ((strlen(word)-2) objects)
+			 */
+#if DEBUG_UNIQUE
+			SYSLOG("New unique suffix for " + word + "\n");
+#endif
+			ob = new_object(INDEX_UNIQUE);
+
+		} else if(ob && 
+				sscanf(object_name(ob), INDEX_UNIQUE+"#%*s") == 1 && 
+				(tmpword = ob->get_word()) != word[1..] ) {
+			/*
+			 * we have a 'shortcut' that needs to be expanded at this level.
+			 */
+			object tmp;
+			int *fileids;
+			int sz, i;
+
+			(INDEXD)->moved_word();
+
+			/* the suffix is no longer unique, overwrite with an index */
+			tmp = (INDEXD)->new_index();
+
+			/* fetch data from unique and feed to new index */
+			fileids = ob->get_pointers();
+			sz = sizeof(fileids);
+	
+			SYSLOG("Move unique '"+tmpword +"' (due to " + word[1..]+")\n");
+#if DEBUG_UNIQUE
+#endif
+			for(i = 0; i < sz; i++) {
+				tmp->add_word(tmpword, fileids[i], get_indices(fileids[i]) );
+			}
+			ob = tmp;
+		}
+	}
+
+#if DEBUG_UNIQUE
+	SYSLOG("adding: " + word + "\n");
+#endif
+
+	/* now, proceed with indexing the word we came here to do */
+	if(wlen > 1) {
+		/* This suffix gets fed further down the tree */
+		ret = ob->add_word( word[1..], fileid, indices );
+	} else {
+		/* This is this suffix's end-station */
+		if(!has_pointers()) {
+			/* This is a new word, then */
+			ret = 1;
+		}
+#if DEBUG_UNIQUE
+		SYSLOG("hit: " + word + "\n");
+#endif
+		add_pointer( fileid, indices );
+	}
+
+	index[word[0..0]] = ob;
+
+	return ret;
+}
+
+void output_index()
+{
+	int i;
+	string *arr;
+
+	arr = map_indices(index);
+
+	SYSLOG("Sub level index [" + sizeof(arr) + "]:\n");
+	for(i = 0; i < sizeof(arr); i++) {
+		SYSLOG("\t" + arr[i] + " : " + object_name(index[arr[i]]) + "\n");
+	}
+}
+
+int *get_hits(string word)
+{
+	if(!SECURE()) {
+		error("illegal call");
+	}
+
+	if(strlen(word) > 1) {
+		object ob;
+		if((ob = index[word[0..0]])) {
+#if DEBUG_UNIQUE
+			SYSLOG("traversing '" + word[0..0] + "'...\n");
+#endif
+			return ob->get_hits( word[1..] );
+		} else {
+#if DEBUG_UNIQUE
+			SYSLOG("no hits for " + word + "...\n");
+			output_index();
+#endif
+			return ({ });
+		}
+	} else {
+#if DEBUG_UNIQUE
+		SYSLOG("hit...\n");
+#endif
+		return get_pointers();
+	}
+}
+

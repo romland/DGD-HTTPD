@@ -1,0 +1,223 @@
+These are changes I made when gluing Jorinde onto Igor
+This as an INCOMPLETE list; it got too many small changed in the end.
+
+/kernel/sys/driver.c:
+	- added set_binary_manager() for associating an object with a port
+	- added preloading of: players/Jorinde/initd
+	- modified binary_connect() to allow an external object to clone a userob
+	  of choice, if no external object is defined, clone a default
+
+/config/preload
+	- added preloading of: players/System/initd
+
+/include/
+	- created directory kernel
+
+/include/kernel/
+	- touched a bunch of include files and added vital defines to point to 
+	  Dummy.c
+	- created a Dummy.c to replace all inherited Kernel API's
+
+/players/System/initd.c
+	- modified to absolute paths due to ~ not working as expected
+	- made create() static.
+
+/players/System/httpd/include/httpd.h
+	- modified COMPILE macro to call dummy function
+
+/players/Jorinde/jorinde.h
+	- changed USR to "/players" from "/usr"
+	- added defines for TRUE and FALSE
+	- JORINDE_HTTPD_CONFIG_DIR to point to /players/Jorinde/config/
+	- Modified COMPILE to also call a non-existing func in the object:
+	  if(!find_object(s)) compile_object(s); (s)->____WAKEUP();
+	- added: # define __IGOR__
+	- added: #ifdef ... # undef status
+	- added # define __NO_CREATE_CLONE_ARG__
+	  which is used to say that create() doesn't get an argument with clone#
+	- added: # define SYSTEM() sscanf(previous_program(), USR + "/System/%*s")
+	- added: # define KERNEL()   sscanf(previous_program(), "/kernel/%*s")
+
+/players/Jorinde/
+	- created directory config
+	- copied the config files to this directory
+	- changed all references in the config to point to correct (default) paths
+	  for now (eg /players/ instead of /usr/).
+
+/players/Jorinde/httpd/include/external.h
+	- Modified the hard-coded paths of SHARED and the include of shared.h
+	  THIS IS NOT A VALID FIX!
+	- /usr/ to use USR instead
+
+/players/Jorinde/open/shared/include/shared.h
+	- SHARED to use "players" instead of "usr"
+
+/players/Jorinde/open/shared/data/iterator.c
+	- forced to: # include "../include/shared.h"
+	- added: static  create()                        { }
+
+/players/Jorinde/open/shared/lib/string.c
+	- changed inherit to do "./blah" instead of just "blah"
+	- forced to: # include "../include/shared.h"
+
+jxml/include/xml.h
+	- added #ifndef COMPILE
+
+jxml/initd.c
+	- create() made static
+	- changed paths to absolute paths, eg: JORINDE_XML+"data/dummy"
+
+jxml/lib/std/dom.c
+	- changed inherit of xpath to "./xpath"
+
+lunit/initd.c
+	- changed paths to absolute paths, eg: JORINDE_XML+"..."
+	- removed include of object.h
+
+httpd/initd.c
+	- removed include of object.h
+
+httpd/include/object.h
+	- ifndef'd COMPILE
+
+httpd/dav/sys/infod.c
+	- in file_type() :
+		#ifdef __IGOR__
+		    dir = get_dir_info(path);
+		#else
+		    dir = get_dir(path);
+		#endif
+
+/include/kernel/access.h
+	- added defines for READ_ACCESS etc/
+
+open/shared/lib/properties.c
+	- added # include "../include/shared.h"
+
+jxml/sys/xmlroot.c
+	- path to absolute, eg: JORINDE_XML + "data/root"
+
+jxml/data/*
+	- Igor-silliness regarding LWO's:
+		#ifdef __IGOR__
+		inherit "/lib/lwo";
+		#endif
+
+jxml/include/xml.h
+	- Replaced former with latter:
+	  # define XML_DIR                        "/usr/Jorinde/jxml/"
+	  # define XML_DIR                        JORINDE_XML
+	- Changed path for syslog to:
+	  # define SYSLOG(x)  (JORINDE+"httpd/sys/logd")->syslog(x)
+
+httpd/sys/logd.c
+	- in syslog() added:
+    if(syslogd != nil) {
+		/*
+		* This is really a reason to worry since you are missing msgs,
+		* but better than an error I guess.
+		*/
+		syslogd->syslog(msg);
+	}
+
+httpd/lib/mediahandler.c
+	- forced to include:
+	  # include "../include/www.h"
+
+httpd/mh/c.c
+	- removed:
+	  api::create();
+
+httpd/obj/app.c
+	- create() changed to be static
+
+httpd/lib/app.c
+	- set_server( previous_object() ); changed to use abs.path (not prev-obj)
+
+create() changed due to no 'clone# arg to create()' in following files:
+
+httpd/data/uri.c
+httpd/obj/app.c
+httpd/data/httptool.c
+httpd/dav/data/davtool.c
+httpd/dav/obj/storage.c
+lunit/data/test.c
+lunit/data/runner.c
+httpd/data/response.c
+httpd/data/session.c
+httpd/data/mime.c
+httpd/data/request.c
+httpd/data/cookie.c
+httpd/data/content.c
+httpd/dav/modules/mapping.c
+httpd/obj/user.c
+
+	- the change looks like this:
+	#ifdef __NO_CREATE_CLONE_ARG__
+	    if(!IS_CLONE(this_object())) { return; }
+	#else
+	    if(!clone) { return; }
+	#endif
+
+/usr/System/httpd/data/tool.c
+	- I just removed the varargs int clone check, it's not lethal anyway.
+
+/usr/System/httpd/binaryd.c
+	- hardcoded paths fixed.
+	- #ifdef __IGOR__ use new_object() efun (which only takes 1 arg)
+
+httpd/include/debug.h
+	- Fixed hardcoded paths.
+
+httpd/sys/server.c
+	- various fixes to being more helpful if DGD was configured incorrectly
+	  in ports it listens to.
+	- check if application configuration is valid (well, a -small check)
+
+httpd/dav/lib/dav.c
+	- "xmlutil" to: "./xmlutil"
+
+~System/jorinde.h introduced!
+	- for base-directories in ~System/.
+	- added # define DRIVER     "/kernel/sys/driver"
+
+~System/httpd/include/httpd.h
+	- Changed all hardcoded paths to be relative to paths defined in jorinde.h
+
+~System/httpd/data/port.c
+	- Changed hardcoded path
+	- It can now call create() itself.
+
+System/httpd/syslogd.c
+	- create() made static
+	- now including httpd.h
+
+
+~System/httpd/data/tool.c
+	- changed hardcoded paths
+	- now inherits igor's lwo-lib
+	- Igor silliness with read/write_bytes()
+
+
+etc...
+
+
+NOTES:
+-	query_owner() how does this work? Will we be compromised security wise?
+	This will not generate any errors since they are almost always on an
+	external object. Grep for it.
+-	Will the one argument to new_object() cause any trouble security wise?
+-	I don't think Igor's driver supports errormanager, so ... 
+	find_object(DRIVER)->set_error_manager(errd); will fail.
+-	It seems like previous_object() behaves differently under Igor than for
+	the Kernel Library. Hmm. *scratch*
+-	~System/open/httpd/lib/user.c is the lib that will need rewriting to
+	fit in with Igor.
+-	Need to see if MODE_DISCONNECT et al works as they should!
+-	LIB_CONN (aka connection, what is the equivalent on Igor?)
+-	compile_object() doesn't take relative paths into consideration, but I
+	think most of these are fixed.
+-	the bstr-tests fail?!
+-	IMPORTANT: previous_object() in create() on Igor should really be 
+	previous_object(1)!
+

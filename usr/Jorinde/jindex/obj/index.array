@@ -1,0 +1,86 @@
+# include "../open/jorinde.h"
+# include "../include/index.h"
+
+# define SECURE() (sscanf(previous_program(), JORINDE_INDEX+"%*s") == 1)
+
+object *index;
+mapping pointers;
+
+/*
+ * with mapping: 2,784,613
+ * with array: 3,109,607
+ */
+
+static void create(varargs int clone)
+{
+	index = allocate(0xff);
+	pointers = ([ ]);
+}
+
+int add_pointer(int fileid, int *indices)
+{
+	if(pointers[fileid]) {
+		pointers[fileid] |= indices;
+	} else {
+		pointers[fileid] = indices;
+	}
+
+	return TRUE;
+}
+                                                                                
+int *get_pointers()
+{
+	if(!SECURE()) {
+		error("illegal call");
+	}
+	
+	return map_indices(pointers);
+}
+
+
+/* returns 1 if a new word was added, 0 otherwise */
+int add_word(string word, int fileid, int *indices)
+{
+	int wlen, ret;
+
+	if(!SECURE()) {
+		error("illegal call");
+	}
+	
+	(INDEXD)->called_add_word();
+
+	if(!index[word[0]]) {
+		index[word[0]] = (INDEXD)->new_index();
+	}
+
+	if((wlen = strlen(word)) > 1) {
+		ret = index[word[0]]->add_word( word[1..], fileid, indices );
+	} else {
+		if(!map_sizeof(pointers)) {
+			/* This is a new word, then */
+			ret = 1;
+		}
+		add_pointer( fileid, indices );
+	}
+
+	return ret;
+}
+
+
+int *get_hits(string word)
+{
+	if(!SECURE()) {
+		error("illegal call");
+	}
+	
+	if(strlen(word) > 1) {
+		if(index[word[0]]) {
+			return index[word[0]]->get_hits( word[1..] );
+		} else {
+			return ({ });
+		}
+	} else {
+		return get_pointers();
+	}
+}
+

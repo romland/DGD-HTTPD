@@ -1,0 +1,16 @@
+
+           Currently in the pipeline or things I'm working on
+           """"""""""""""""""""""""""""""""""""""""""""""""""
+- Dependencies on objectd (__HAVE_OBJECTD__) causes problems for people 
+  without objectd, fix!
+- The conditional GET doesn't work -- it will NEVER return a new copy if
+  an etag comes with the request.
+- DAV does not work with Windows XP's client.
+- Phase out lib/content and data/content and replace with bstr.
+- Finish HTTP/1.1 GET/PUT's conditional and partial fetches. (Need to make 
+  it work with bstr first).
+- HTTP PUT (need to make it work with bstr first).
+- Add 'the new' object-types all over the place (this is more refactoring)
+- Split up the documentation directory in the httpd to reflect that we are
+  now several sub projects.
+

@@ -1,0 +1,244 @@
+#
+# Description: Changelog (documentation).
+# Version:     $Id: Changelog 286 2004-08-06 15:49:51Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+Regarding this Changelog
+  Sometimes I add silly (not entirely factual) entries in this file because
+  I like to keep things for historical reasons (other than in Subversion).
+
+Version 0.1.0, 20-jan-2004
+- Just experimenting with DGD's Kernel Library.
+
+Version 0.2.0, 23-jan-2004
+- No idea.
+
+Version 0.3.0, 25-jan-2004
+- No idea.
+
+Version 0.3.4, 27-jan-2004
+- No idea. 
+
+Version 0.3.5, 29-jan-2004
+- Started this Changelog.
+- Major changes, but most important: Minimized number of files in System.
+  Most of the work is now done in /usr/Jorinde/ and applications are in
+  /usr/www/
+
+Version 0.3.6, 12-feb-2004
+- Introduced a handler for logging, no logging standard implemented yet.
+- Multiple website hosting, server will clone applications.
+  This has been a work in progress for some time; but should now be done.
+- XML: I think this is somewhat stable now (it works for my purposes now)
+- XML: Implemented a very minimal version of the xpath standard.
+- Configuration of server and applications is done through XML-docs.
+
+Version 0.3.7, 07-mar-2004
+- XML: Element-attributes can now have escaped quotes.
+- Logging-format is now defined in the xml-configuration file.
+  Something that -could- be called NCSA logging is implemented. Check TODO's
+  to make it comply.
+- Finalized buffering and read-on-demand of big files (>48kb).
+  Somewhat messy code, but it works. Also worked out limitations of MAX_ARRAY.
+  This was a silly limitation since the actual data wasn't the problem.
+- Started documenting code in /usr/System/httpd/obj/user.c
+- Renamed all query_* functions to get_*.
+  Some names are less than optimal due to this, but I feel that consistency
+  is more important than the big mess of mixing the two (which I had).
+  Exceptions are (of course) functions which are called by the kernel.
+- Functions remove_whitechars and remove_crlf in lib/string.c are deprecated;
+  use strip_whitechars() / strip_crlf()
+- Added lower_case(), upper_case(), capitalize() to lib/string.c
+- POST (multipart) now works as advertised.
+  Split multi-part boundaries in content-array are finally taken into
+  consideration.
+
+Version 0.3.7, 14-mar-2004
+- WebDAV implementation started.
+  A work very much in progress, and probably will be for some time.
+- Bugfix: complete-flag in data/post.c did not always work as advertised.
+  Small files failed to upload every now and then. Forced to do completion
+  check in a more expensive way.
+- Moved things around quite a bit related to receiving content (POST etc).
+  This to make it easier to implement WebDAV plus adding a bit more 
+  consistency to request-content altogether. *sigh* Maximum string-size keeps
+  on giving me grief when dealing with content.
+
+Version 0.3.7, 16-mar-2004
+- Added set/get_port() to lib/app.c.
+  Called by server after initializing an application.
+- Added support for plugins that want to support HTTP (extension) methods.
+  Plugin-services are added in the server-configuration and will be available
+  to all applications.
+- Added ability to only support a limited subset of HTTP-methods.
+  You set allowed commands on a per application basis. These values override
+  plugged in services.
+- More changes when it comes to how we deal with request-bodies.
+  Grr. I do hate MIME in HTTP/1.x.
+
+Version 0.3.7, 17-mar-2004
+- /usr/Jorinde/dav/[lib, include, etc]
+  Created.
+- XML: Made it a little easier to add and create nodes in an XML-tree.
+  Function insert() supported by element.c and root.c. This whole thing
+  with being DOM-compliant will have to come another year. I'm mainly
+  focusing on getting WebDAV to work at the moment and all changes I
+  make elsewhere are needed in order to get that to work.
+- DAV: Partial implementation of PROPFIND in place.
+  Now we need to deal with the impact on security before we complete [it] and
+  any other WebDAV method.
+
+Version 0.3.8, 25-mar-2004
+- Refactoring.
+  Rearranging everything to minimize amount of code in ~System (again). This
+  is a huge task as it needs a lot of rewriting due to my own stupidity,
+  don't expect any new entries in this file for a while.
+- And we compile and respond to (simple) requests again.
+  This time we respect the Kernel Library for what it really is. We have a
+  layer in ~System that we use to inherit from Kernel as opposed to having
+  protocol related stuff in there. No matter how much I wish I could keep
+  authentication within the ~System directory ... it just won't happen.
+  Now we have another few days of cleaning up and fixing everything we broke.
+- Methods now inherit standard wiztool.
+  In the case of anonymous access the layer in /www/access.c is used.
+- Simple events implemented which can be used by LWO's. 
+  I am not sure on what impact this has on performance since we need to keep
+  references to multiple instances (eg set in different threads). So I might
+  very well undo this at some point.
+- We only keep one response in pending state now, I was overly ambitious.
+  I ran into problems when trying to keep multiple pending responses when
+  I started to use events for LWO's. In fact, the more I use these events
+  the more I am about to tear them out again.
+- Some documentation written.
+
+Version 0.3.9, 20-apr-2004
+- Indent a string or a node of XML.
+- Added a few configuration options (some still marked as TODO)
+- Added a library containing array-realted helper functions.
+- WebDAV: PROPFIND works.
+- Introduced RFC 1123 datetime format.
+- The error-pages handler works again.
+- WebDAV: MKCOL works.
+
+Version 0.3.9, 03-may-2004
+- All file-operations done by web-methods now use the functions in lib/file.c
+- Default documents are only taken into consideration in GET.
+- WebDAV: DELETE works.
+- Now ignoring port-number in Host-header.
+- Partial implementation of arbitrary WebDAV properties.
+- WebDAV: COPY works.
+- WebDAV: MOVE works.
+
+Version 0.3.10, 04-may-2004
+- WebDAV: Setting and retrieving arbitrary properties on resources works.
+- WebDAV: The propname action almost works (interim save) :).
+- WebDAV: PROPPATCH works.
+- Various other fixes and minor bugs taken care of.
+- WebDAV: Nautilus now works as expected.
+- WebDAV: A DAV-application-configuration was added.
+- Support for multiple ports for applications.
+  Prior to this all applications had to be on same port. This is done by
+  setting a different binary manager for each port (this will just forward
+  all requests to System's binaryd.c).
+- A loop-hole in authorization daemon was fixed.
+- Jorinde/lib/file.c: Don't use anonymous access if it's turned off.
+- Plugged in tools (dav / http) are now cloned by System.
+  This is a work in progress. NOTE: the tools are now BROKEN.
+- Authenticated access now works properly (this had never been tested)
+
+Version 0.3.11, 08-may-2004
+- Fixed a number of bugs related to persistent connections which hadn't
+  been tested for months. Functions clear/set_ttl() added to user to
+  better keep track of this.
+- WebDAV now seems to work in newer versions of Konqueror (older versions
+  are still a problem)
+- Some of Jorinde's own WebDAV properties now works.
+- Fixed a problem that sent off a response before we got two CRLF's in
+  a request (after headers).
+- doc/TODO introduced
+- Authentication cleanup.
+- Checked in a bunch of RFC's related to the project.
+- Partial implementation of Digest authentication.
+- Complete rewrite of how URI's work (now their own object)
+- Implemented a big-string class (still not used anywhere)
+- A unit-test framework was written (this one is looking for a new home
+  together with XML and the httpd-plugins)
+- Unit-tests for a few programs were added.
+- Separated connection-related code from obj/user.c into a lib.
+- Many many bugfixes.
+
+Version 0.3.12, 02-jun-2004 (rev. 184+)
+- Split the user-object into more managable parts.
+- Bstr-additions.
+- Documentation on how to glue Jorinde onto another environment.
+- Some minor code-moving.
+- Added some configuration options to .xml-files to make it more adaptable.
+- Fixed a bunch of TODO's in user.c
+- Added a disk-logger.
+- Complete restructuring of Jorinde, the application has now become several
+  sub-projects, namely (there are still some awkward dependencies):
+  httpd:  Jorinde HTTPD
+  jerror: Jorinde Error handler
+  jxml:   Jorinde XML processor
+  lunit:  Jorinde Unit Test Framework
+  shared: Jorinde Shared Libraries
+- Bugs related to configuration-hooks were fixed. (rev. 221)
+
+Version 0.3.12, xx-jun-2004 (rev. 222+)
+- Created a shared library which implements arbitrary properties.
+- Added arbitrary properties to application and server.
+- Changed session to use the new properties.
+- Added a test to test the properties in server.
+- Removed hard-coded paths.
+- Removed some debug-statements in user.c.
+- Server will fail if there are no method-plugins defined.
+- Idiot-check in the errord to prevent recursion.
+- Updated doc/Glue to be more helpful
+- Added JORINDE_HTTPD_CONFIG_DIR to jorinde.h so that the server-config can 
+  be loaded from a location that is not default
+- Cleaned up general behaviour around include files so that we could more 
+  easily glue the packages to various environments (primarily IgorMUD for now)
+- Documentation restructuring.
+- Minor changes in practically every important file to get the packages to 
+  work on IgorMUD.
+- Partially completed glue for IgorMUD (there are still issues)
+- General moving around of some files that got misplaced in the Glue-fixes.
+- Fixed a few old TODO's.
+- Don't be quite so eager to make an error of all 300-status codes (304)
+- Some SYSLOG debug statements are now LGO-statements.
+- Conditional GET introduced
+- Etag introduced together (not 100% and not compliant due to 'weak' and
+  'strong' etags. I am hesitant to introduce 'strong' ones)
+- shared/lib/string.c was stripped from all date functionality
+- shared/lib/date.c introduced a lot of new date functionality has gone in 
+  as well (string to int etc)
+- Unit-tests for dates
+- Spring cleaning of www/webroot/*
+- Added a WORKING_ON file for what is currently being worked on.
+- Quick hack to support encoded space (%20) in uri.c
+
+Version 0.3.13, 03-aug-2004 (rev. 265+)
+- Removed duplicate code (had been moved to shared-lib date.c) in string.c
+
+Version 0.3.13, 04-aug-2004 (rev. 266+)
+- Added support for objectd in the glue.
+- Added unit-test for objectd.
+- Added support for having an ObjectD installed.
+- Removed redundant RFC directory
+- Fixed broken request-wrapper (introduced with the URI-object)
+- Added some .LSP examples.
+
+Version 0.3.13, 06-aug-2004 (rev. 266+)
+- Disabled etag for now (it was not working 100%)
+- mh/c.c: Object broke when I introduced URI-object. It now gets file-suffix
+  from the URI and not the request.
+- Jorinde's webpage error-handler is now working again.
+- POSTed Content-Type 'x-www-form-urlencoded' now works as expected.
+- url encode/decode library introduced (currently only decode).
+- html errord is now enabled.
+- Added wrappers for session/server and you can now set properties (etc) on
+  all objects via the property_wrap (which is inherited by all wrappers).
+- Errors that are NOT web-errors now work (they are output using SYSLOG() 
+  macro for now) (rev 285)
+

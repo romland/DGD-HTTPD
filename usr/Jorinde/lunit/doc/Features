@@ -1,0 +1,18 @@
+#
+# Description: Feature list of Lunit.
+# Version:     $Id: Features 157 2004-05-30 23:52:01Z romland $
+# License:     see Jorinde/doc/License
+#
+
+Features
+
+- A basic unit test framework
+
+Disclaimers
+
+- This implementation was thrown together in a few hours, don't expect any
+  miracles.
+
+- I glanced at the API of JUnit when writing this. But that implementation
+  is much more sophisticated. (http://www.junit.org/junit/javadoc/3.8.1/).
+

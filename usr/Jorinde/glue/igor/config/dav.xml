@@ -1,0 +1,181 @@
+<!--
+	Description: Application configuration.
+	Version:     $Id: dav.xml 220 2004-06-16 20:28:52Z romland $
+	License:     (c)2004 Joakim Romland, see doc/License
+-->
+
+<?xml version="1.0" standalone="yes"?>
+<application>
+	<name>
+		WebDAV Application
+	</name>
+
+	<description>
+		This exposes / of the DGD-environment. Anonymous access is not 
+		allowed and there are no mediahandler plugins defined.
+	</description>
+
+	<service-type>http</service-type>		<!-- not yet used -->
+	<hostname>foo-bar.xs4all.nl</hostname>
+
+	<!--
+		First entry will be looked for first, etc. If no default page 
+		could be found, it will check if 'list-directory' is set to 'allow'.
+		TODO: list-directory (not implemented yet)
+	-->
+	<default-pages list-directory="allow">
+		<page name="index.html" />
+		<page name="index.htm" />
+		<page name="index.lsp" />
+		<page name="default.html" />
+		<page name="default.htm" />
+		<page name="default.lsp" />
+	</default-pages>
+
+
+	<support>
+		<!--
+			These are returned by the OPTIONS (if OPTIONS is allowed!) command,
+			if a command is not in this list it will not be available to
+			http-users.
+		-->
+		<methods>
+			<public>
+				<method>GET</method>
+				<method>POST</method>
+				<method>HEAD</method>
+				<method>OPTIONS</method>
+				<!--method>TRACE</method-->
+				<method>PUT</method>
+				<method>PROPFIND</method>
+				<method>MKCOL</method>
+				<method>DELETE</method>
+				<method>PROPPATCH</method>
+				<method>COPY</method>
+				<method>MOVE</method>
+			</public>
+			<allow>
+				<method>TODO: :)</method>
+			</allow>
+		</methods>
+	</support>
+
+	<web-root>
+		<!--
+			Set to 'allow' (to allow anonymous user access to the site,
+			or anything else force everyone to authenticate. This makes
+			the httpd use the plugged in accessd in all cases.
+		-->
+		<anonymous-access>deny</anonymous-access>
+		<path>/</path>
+	</web-root>
+
+	<!-- TODO: user-homes (not implemented) Hmm, I don't know if I want to! -->
+	<user-homes>
+		<shortcut>~</shortcut>
+		<path>/players/</path>
+		<public-dir>open/webroot/</public-dir>
+	</user-homes>
+
+	<program>
+		<path>/players/Jorinde/httpd/obj/app</path>
+	</program>
+
+	<local-time>
+		<zone> GMT+1</zone>
+	</local-time>
+
+	<session>
+		<enabled>1</enabled>
+		<length>900</length>
+	</session>
+
+	<accesslogger>
+		<name>NCSA logging</name>
+		<program>/players/Jorinde/httpd/sys/ncsa_log</program>
+		<parameter key="log-filename" value="/players/Jorinde/log/dav.log" />
+		<parameter key="log-format"
+			value="%h %l %u %t \"%r\" %s %b \"%{Referer}\" \"%{User-Agent}\""
+		/>
+	</accesslogger>
+
+	<errorpagehandler>
+		<name>Error-page handler</name>
+		<program>/players/Jorinde/httpd/sys/statusd_400_500</program>
+		<parameter key="directory" value="/players/Jorinde/httpd/errors/" />
+	</errorpagehandler>
+
+	<media-types>
+		<media-type>
+			<file-suffix>html</file-suffix>
+			<content-type>text/html</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>htm</file-suffix>
+			<content-type>text/html</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>gif</file-suffix>
+			<content-type>image/gif</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>png</file-suffix>
+			<content-type>image/png</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>jpg</file-suffix>
+			<content-type>image/jpeg</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>jpeg</file-suffix>
+			<content-type>image/jpeg</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>css</file-suffix>
+			<content-type>text/css</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>txt</file-suffix>
+			<content-type>text/plain</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>ico</file-suffix>
+			<content-type>image/vnd.microsoft.icon</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>xml</file-suffix>
+			<content-type>text/xml</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>xhtml</file-suffix>
+			<content-type>application/xhtml+xml</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>h</file-suffix>
+			<content-type>text/html</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>c</file-suffix>
+			<content-type>text/html</content-type>
+		</media-type>
+
+		<media-type>
+			<file-suffix>lsp</file-suffix>
+			<content-type>text/html</content-type>
+		</media-type>
+	</media-types>
+
+</application>
+

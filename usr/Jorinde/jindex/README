@@ -1,0 +1,248 @@
+This was THROWN together in a couple of hours on 08aug2004 just to 
+see if it would be feasable to have a full-text search on things
+under DGD.
+
+I know precicely jack-shit about indexing and search technology, 
+so do forgive me :)
+
+It uses objects for storing the index in order to utilize DGD's swapping
+mechanism. I want to reduce the number of objects used, though, but I'm
+not sure what route to take.
+
+Cost:
+- 50% of the cost for indexing goes into /obj/index.c->add_word()
+- the spacifying business seems to be fairly constant around 2,600 for
+  most files.
+
+It's a lot slower in the beginning of indexing due to an optimization 
+that was added to save memory, I guess some algorithm could be added that
+checks wheter a word's suffix is 'common' and just add the entire index
+hierarchy or something. I don't know :) This probably doesn't make sense
+even :)
+
+Storing and Indexing Text
+	http://db.uwaterloo.ca/~fwtompa/cs741/7-indexing.htm
+
+
+---
+BEFORE UNIQUE: /doc/efun/
+Aug  9 13:04:53 ** Index complete:
+Aug  9 13:04:53 **        file count: 19
+Aug  9 13:04:53 **      folder count: 1
+Aug  9 13:04:53 **        word count: 1762
+Aug  9 13:04:53 ** unique word count: 295
+Aug  9 13:04:53 **        byte count: 11787
+Aug  9 13:04:53 **   bad sized words: 83
+Aug  9 13:04:53 **      broken words: 1
+Aug  9 13:04:53 ** fileword ob count: 0
+Aug  9 13:04:53 **    index ob count: 1230
+Aug  9 13:04:53 **    add word calls: 5538
+Aug  9 13:04:53 **        total cost: 2,784,613
+Aug  9 13:04:53 **  avg. word length: 5
+
+AFTER UNIQUE:
+Aug  9 15:50:17 ** Index complete: /doc/efun/
+Aug  9 15:50:17 **        file count: 19
+Aug  9 15:50:17 **      folder count: 1
+Aug  9 15:50:17 **        word count: 1450
+Aug  9 15:50:17 ** unique word count: 517
+Aug  9 15:50:17 **        byte count: 11787
+Aug  9 15:50:17 **   bad sized words: 395
+Aug  9 15:50:17 **      broken words: 1
+Aug  9 15:50:17 ** fileword ob count: 0
+Aug  9 15:50:17 **    index ob count: 440
+Aug  9 15:50:17 **    add word calls: 4086
+Aug  9 15:50:17 **        total cost: 2,304,917
+Aug  9 15:50:17 **  avg. word length: 5
+
+AFTER WITH LESS MOVING (due to bug): /doc/efun/
+Aug  9 16:14:45 ** Index complete:
+Aug  9 16:14:45 **        file count: 19
+Aug  9 16:14:45 **      folder count: 1
+Aug  9 16:14:45 **        word count: 1450
+Aug  9 16:14:45 ** unique word count: 388
+Aug  9 16:14:45 **        byte count: 11787
+Aug  9 16:14:45 **   bad sized words: 395
+Aug  9 16:14:45 **      broken words: 1
+Aug  9 16:14:45 ** fileword ob count: 0
+Aug  9 16:14:45 **    index ob count: 250
+Aug  9 16:14:45 **    add word calls: 3239
+Aug  9 16:14:45 **        total cost: 2,008,270
+Aug  9 16:14:45 **  avg. word length: 5
+
+WITH MORE OPTIMIZATION IN indexd: /doc/efun/
+Aug  9 17:06:23 ** Index complete:
+Aug  9 17:06:23 **        file count: 19
+Aug  9 17:06:23 **      folder count: 1
+Aug  9 17:06:23 **        word count: 1451
+Aug  9 17:06:23 ** unique word count: 388
+Aug  9 17:06:23 **        byte count: 11787
+Aug  9 17:06:23 **   bad sized words: 395
+Aug  9 17:06:23 **      broken words: 0
+Aug  9 17:06:23 ** fileword ob count: 0
+Aug  9 17:06:23 **    index ob count: 250
+Aug  9 17:06:23 **    add word calls: 3239
+Aug  9 17:06:23 **        total cost: 1,984,872
+Aug  9 17:06:23 **  avg. word length: 5
+
+Not sure, less debugging?
+Aug 10 10:43:14 ** Index complete:
+Aug 10 10:43:14 **        file count: 19
+Aug 10 10:43:14 **      folder count: 1
+Aug 10 10:43:14 **        word count: 1451
+Aug 10 10:43:14 ** unique word count: 387
+Aug 10 10:43:14 **        byte count: 11787
+Aug 10 10:43:14 **   bad sized words: 395
+Aug 10 10:43:14 **      broken words: 0
+Aug 10 10:43:14 ** fileword ob count: 0
+Aug 10 10:43:14 **    index ob count: 250
+Aug 10 10:43:14 **    add word calls: 3222
+Aug 10 10:43:14 **        total cost: 1,930,100
+Aug 10 10:43:14 **  avg. word length: 5
+Aug 10 10:43:14 ** Initialization complete.
+
+Faster searching and bug-fixes in indexing:
+Aug 10 15:51:01 ** Index complete:
+Aug 10 15:51:01 **        file count: 19
+Aug 10 15:51:01 **      folder count: 1
+Aug 10 15:51:01 **        word count: 1451
+Aug 10 15:51:01 ** unique word count: 349
+Aug 10 15:51:01 **        byte count: 11787
+Aug 10 15:51:01 **   bad sized words: 395
+Aug 10 15:51:01 **      broken words: 0
+Aug 10 15:51:01 ** fileword ob count: 0
+Aug 10 15:51:01 **    index ob count: 256
+Aug 10 15:51:01 **    add word calls: 2650
+Aug 10 15:51:01 **        total cost: 1,863,549
+Aug 10 15:51:01 **     time indexing: 0
+Aug 10 15:51:01 **  avg. word length: 5
+
+Fixed bug with -always- adding object
+Aug 11 10:46:17 ** Index complete:
+Aug 11 10:46:17 **        file count: 19
+Aug 11 10:46:17 **      folder count: 1
+Aug 11 10:46:17 **        word count: 1451
+Aug 11 10:46:17 ** unique word count: 283
+Aug 11 10:46:17 **        byte count: 11787
+Aug 11 10:46:17 **   bad sized words: 395
+Aug 11 10:46:17 **      broken words: 0
+Aug 11 10:46:17 ** fileword ob count: 0
+Aug 11 10:46:17 **    index ob count: 242
+Aug 11 10:46:17 **    add word calls: 2728
+Aug 11 10:46:17 **        total cost: 1,832,291
+Aug 11 10:46:17 **     time indexing: 0
+Aug 11 10:46:17 **  avg. word length: 5
+
+Fixed bug with making a hit one level too early (this made it slower):
+Aug 11 13:41:22 ** Index complete:
+Aug 11 13:41:22 **        file count: 19
+Aug 11 13:41:22 **      folder count: 1
+Aug 11 13:41:22 **        word count: 1451
+Aug 11 13:41:22 ** unique word count: 292
+Aug 11 13:41:22 **        byte count: 11787
+Aug 11 13:41:22 **   bad sized words: 395
+Aug 11 13:41:22 **      broken words: 0
+Aug 11 13:41:22 ** fileword ob count: 0
+Aug 11 13:41:22 **    index ob count: 272
+Aug 11 13:41:22 **    add word calls: 2990
+Aug 11 13:41:22 **        total cost: 1,931,152
+Aug 11 13:41:22 **     time indexing: 0
+Aug 11 13:41:22 **  avg. word length: 5
+
+------------------
+
+AFTER WITH MORE FILES: /doc/
+Aug  9 15:55:35 **        file count: 899
+Aug  9 15:55:35 **      folder count: 49
+Aug  9 15:55:35 **        word count: 134376
+Aug  9 15:55:35 ** unique word count: 24899
+Aug  9 15:55:35 **        byte count: 1143423
+Aug  9 15:55:35 **   bad sized words: 43574
+Aug  9 15:55:35 **      broken words: 212
+Aug  9 15:55:35 ** fileword ob count: 0
+Aug  9 15:55:35 **    index ob count: 15415
+Aug  9 15:55:35 **    add word calls: 331604
+Aug  9 15:55:35 **        total cost: 174,977,689
+Aug  9 15:55:35 **  avg. word length: 5
+
+AFTER WITH MORE FILES and bugfix: /doc/
+Aug  9 16:17:36 ** Index complete:
+Aug  9 16:17:36 **        file count: 899
+Aug  9 16:17:36 **      folder count: 49
+Aug  9 16:17:36 **        word count: 134376
+Aug  9 16:17:36 ** unique word count: 21269
+Aug  9 16:17:36 **        byte count: 1143423
+Aug  9 16:17:36 **   bad sized words: 43574
+Aug  9 16:17:36 **      broken words: 212
+Aug  9 16:17:36 ** fileword ob count: 0
+Aug  9 16:17:36 **    index ob count: 9638
+Aug  9 16:17:36 **    add word calls: 306646
+Aug  9 16:17:36 **        total cost: 165,789,815
+Aug  9 16:17:36 **  avg. word length: 5
+
+Aug 10 13:22:20 ** Index complete: /doc/
+Aug 10 13:22:20 **        file count: 910		<---
+Aug 10 13:22:20 **      folder count: 50
+Aug 10 13:22:20 **        word count: 172937
+Aug 10 13:22:20 ** unique word count: 25502
+Aug 10 13:22:20 **        byte count: 1492825
+Aug 10 13:22:20 **   bad sized words: 56733
+Aug 10 13:22:20 **      broken words: 0
+Aug 10 13:22:20 ** fileword ob count: 0
+Aug 10 13:22:20 **    index ob count: 11853
+Aug 10 13:22:20 **    add word calls: 359705
+Aug 10 13:22:20 **        total cost: 194,623,298
+Aug 10 13:22:20 **     time indexing: 0
+Aug 10 13:22:20 **  avg. word length: 5
+
+Aug 10 15:54:12 ** Index complete:
+Aug 10 15:54:12 **        file count: 910	<---
+Aug 10 15:54:12 **      folder count: 50
+Aug 10 15:54:12 **        word count: 172937
+Aug 10 15:54:12 ** unique word count: 23552
+Aug 10 15:54:12 **        byte count: 1492825
+Aug 10 15:54:12 **   bad sized words: 56733
+Aug 10 15:54:12 **      broken words: 0
+Aug 10 15:54:12 ** fileword ob count: 0
+Aug 10 15:54:12 **    index ob count: 13069
+Aug 10 15:54:12 **    add word calls: 297193
+Aug 10 15:54:12 **        total cost: 186,382,298
+Aug 10 15:54:12 **     time indexing: 0
+Aug 10 15:54:12 **  avg. word length: 5
+   ^^^^
+Aug 10 15:58:45 **       Query cost:       1,220
+Aug 10 15:58:45 **     Fn translate:       8,302
+--- 
+Aug 11 10:58:35 ** Index complete:
+Aug 11 10:58:35 **        file count: 913
+Aug 11 10:58:35 **      folder count: 52
+Aug 11 10:58:35 **        word count: 173072
+Aug 11 10:58:35 ** unique word count: 9538
+Aug 11 10:58:35 **        byte count: 1493888
+Aug 11 10:58:35 **   bad sized words: 56771
+Aug 11 10:58:35 **      broken words: 0
+Aug 11 10:58:35 ** fileword ob count: 0
+Aug 11 10:58:35 **    index ob count: 7290
+Aug 11 10:58:35 **    add word calls: 320138
+Aug 11 10:58:35 **        total cost: 180,780,480
+Aug 11 10:58:35 **     time indexing: 0
+Aug 11 10:58:35 **  avg. word length: 5
+---
+Aug 11 13:46:04 ** Index complete:
+Aug 11 13:46:04 **        file count: 913
+Aug 11 13:46:04 **      folder count: 52
+Aug 11 13:46:04 **        word count: 173106
+Aug 11 13:46:04 ** unique word count: 11038
+Aug 11 13:46:04 **        byte count: 1494132
+Aug 11 13:46:04 **   bad sized words: 56771
+Aug 11 13:46:04 **      broken words: 0
+Aug 11 13:46:04 ** fileword ob count: 0
+Aug 11 13:46:04 **    index ob count: 8585
+Aug 11 13:46:04 **    add word calls: 367213
+Aug 11 13:46:04 **        total cost: 190,835,730
+Aug 11 13:46:04 **     time indexing: 0
+Aug 11 13:46:04 **  avg. word length: 5
+   ^^^^
+Aug 11 13:46:25 **       Query cost:         681
+Aug 11 13:46:25 **     Fn translate:       5,068
+

@@ -1,0 +1,41 @@
+#
+# Description: How-to install (documentation).
+# Version:     $Id: Install 279 2004-08-06 12:59:31Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+This file is largely a TODO, but for now this is a start...
+
+Checklist to set up a fresh install of DGD and the HTTPD:
+
+[x] Download the Jorinde Package.
+
+[ ]	Download DGD from ftp://ftp.dworkin.nl/pub/dgd/experimental/ then pick
+    the platform of your choice (the newer version the better), either you
+	download a binary or you compile your own.
+
+[ ]	Install DGD. 
+	You don't have IPv6 on your machine and you are compiling your own DGD?
+	Modify the Makefile to have -DINET6=0 (1 is default).
+
+[ ]	Move directories in the Jorinde package into DGD_INSTALL_PATH/mud/usr/.
+	The 'mud' directory is the root of your DGD world ('/' from now on).
+	After copying you should have /usr/Jorinde, /usr/System/ and /usr/www/.
+
+[ ]	Set up DGD to listen to two ports (default configuration of the httpd
+	wants port 80 and 81), edit /dgd/mud.dgd and change the binary_port
+	in the config to this:
+		binary_port = ([ "*":6048, "*":80, "*":81 ])
+	...on older versions of DGD you want to do this instead of the above:
+		binary_port = ({ 6048, 80, 81 });
+
+	The alternative is to use the 'mud.dgd' included in the packaged version
+	of this application and just change the path to suit your system. At 
+	the time of writing, 'mud.dgd' was not in the SVN-repository, though.
+
+[ ]	You -might- want to examine the settings for the httpd; 
+	/usr/Jorinde/httpd/config/*.xml, server.xml is the starting point and
+	anything that isn't referenced from that file can be ignored. :-)
+
+[ ]	Start up DGD using the 'mud.dgd' file as in argument (or if you use
+	Microsoft Windows, use 'Open' from menu)

@@ -1,0 +1,33 @@
+#
+# List of objects to load automatically at reboot.
+# I have cleaned out some stuff here, after the patch
+# to load_auto_obj() - autoloading stuff does not
+# need to be loaded anymore.
+#
+#room/adv_guild
+#room/church
+#obj/living
+#obj/monster
+#obj/player
+obj/secure/player/access
+#obj/secure/player/apprentice
+#obj/secure/player/basic
+#obj/secure/player/finger
+#obj/secure/player/mortal
+#obj/secure/player/soul
+obj/secure/player/user_limit
+obj/secure/player/wizard
+#obj/explore/explore_obj
+#obj/explore/extension
+sys/catch_ts
+
+#obj/treasure
+#obj/weapon
+#obj/armour
+#obj/list/toplist
+
+players/System/initd
+
+# Takes a long time to load. Better be done at preloading stage. 
+# /Abigail, 931118
+#room/monster/igor

@@ -1,0 +1,44 @@
+#
+# Description: TODO.
+# Version:     $Id: TODO 261 2004-07-14 12:50:59Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+4.	Finish Digest authentication.
+
+5.	Request is passed around too much (esp. around access-queries), in many 
+	cases just passing on an URI is enough.
+
+6.	When redirecting a file-download from localhost to /dev/null we only
+	get a download-rate of 10meg/sec. Is it disk-access? It's a 7200 RPM
+	disk: hdparm -tT /dev/hda
+		/dev/hda:
+		Timing buffer-cache reads:   480 MB in  2.00 seconds = 240.00 MB/sec
+		Timing buffered disk reads:   78 MB in  3.06 seconds =  25.49 MB/sec
+	We want to speed this up, where is the problem?
+
+7.	FIXED PARTIALLY! Split up the entire Jorinde-package into the following 
+	smaller packages:
+		- XML - LUnit - LSP - HTTPD - DAVD - Shared libraries - Error-pages 
+		- Documentation - Web-application - 'Tests' web-application
+
+9.	Make server suitable for persistent environments (I have no idea how much
+	work this might be. Not much?)
+
+10	Make all important SYSLOG's go to logd->log()
+
+11	data/httptool.c:
+	2	I don't think OPTIONS * HTTP/1.1 will work yet.
+	3	Ranges!
+	4	http_tool->write_resource()
+	5	cmd_delete
+	6	cmd_trace
+	8	partial get
+
+12	We cannot handle logging of multiple applications, it will only log 
+	for the last one in server.xml -- need to make the logger a clone.
+
+13	rpl -R -x '.c' 'error("illegal call\n")' 'error("illegal call")' .
+
+14	For consistency, rename all functions 'tostring' to 'to_string', or vice
+	versa.

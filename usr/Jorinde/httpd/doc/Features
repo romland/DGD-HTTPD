@@ -1,0 +1,125 @@
+#
+# Description: Feature list (documentation).
+# Version:     $Id: Features 210 2004-06-15 08:27:28Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+Summary
+	HTTP/WebDAV server for DGD written in LPC.
+
+
+Description
+	HTTP/WebDAV server for DGD (Dworkin's Generic Driver) written entirely
+	in LPC (Object Oriented C dialect). 
+
+	DGD is today mostly used by MUDs (Multi User Dungeons) but its 
+	capabilities stretch far beyond that.
+
+
+License
+	I have not made up my mind regarding licensing yet (except that it should
+	be free for non-commercial use). So until then:
+
+	- Free for non-commercial use.
+	- Commercial use: Contact me (romland at rjdk d0t c0m).
+
+
+Portability
+	The httpd was written to be somewhat portable for environments running
+	on top of DGD. I have not yet tried to move it to any environment; so
+	chances are that you will have to patch the httpd-code in order to 
+	achieve this. This is not something you should have to do in the future,
+	I picture people only having to modify XML-files to get this up and
+	running. If you run into 'problems' like this, send me an issue report,
+	or better yet, a patch.
+
+	It is tested on vanilla DGD of the experimental branch 1.2.73 and up. It
+	might work with earlier versions of DGD with slight (to no) modifications.
+	But I doubt you can get it to work reliably without LWO's, which were
+	introduced around version 1.2.19.
+
+
+Features
+    - HTTP-server written entirely in LPC for DGD (over its standard Kernel)
+
+	- LSP which is LPC server-side-scripting (similar to jsp, php, asp)
+	  LSP-programs compile to LWO and are re-compiled on demand if they were
+      modified. Public wrappers for Server, Application, Session, Request and
+      Response objects are available to these programs.
+
+	- Custom errord which will output html-based errors to httpd-users and
+      still act normally for other users.
+
+	- Http-logging
+	  By default NCSA access-logging
+
+	- Multiple application hosting
+	  By default two different examples.
+
+	- Cookies
+	  As expected.
+
+	- Session tracking
+	  Keeps track of a user between requests using cookies.
+
+	- Basic authentication
+	  I hope to implement at least digest as well. This is more or less
+	  necessary due to WebDAV.
+
+	- XML 1.0 processor
+	  More below.
+
+Security
+	I take no responsibility for what might happen if you use this. :)
+
+	If you are using this, you will want to think twice regarding security;
+	you are opening your environment to the outside world. Then think another
+	two times when you consider the fact that this is built on top of the 
+	DGD Kernel Library where programmers are restricted so that they can't
+	clone objects from */lib/* etc. The httpd takes for granted that a lot
+	of these restrictions are in place. See DGD documentation for more 
+	information.
+
+
+// TODO: everything below
+Customization
+	All customization takes place in a small set of XML documents.
+
+	- Customizable HTTP-status pages
+	- Customizable logger
+	- Customizable logging-format
+	- Default-pages for directories
+
+
+Plugins
+	- Add extension-methods (eg GET or POST).
+	- Add HTTP-status pages-handler
+	- Add mediatype-handlers (eg call fnurt.c when *.css is requested)
+	- Add multiple error-handlers depending on what caused the error
+
+
+Standards
+	- HTTP/1.0
+	  minimal implementation
+
+	- HTTP/1.1
+	  minimal implementation; but:
+
+	- NCSA access logging
+	  not 100%
+
+	- XML 1.0 processor (http://www.w3.org/TR/REC-xml)
+	  A processor for XML (according to the 1.0 sepcifcation). It parses
+	  the tree for elements and attributes and makes a tree of Light Weigth
+	  objects that can be serialized back to text/xml.
+
+	  Keep in mind that it won't do error reporting nor will it do document
+	  type declaration (internal entities) or processing instructions.
+
+	- XML Document manipulation
+	  This is a home-made implementation to manipulate the tree that is 
+	  vaguely based on DOM (or not).
+
+	- Xpath:
+	  Sufficient enough to retreive elements from the XML tree.
+

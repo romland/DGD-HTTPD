@@ -1,0 +1,29 @@
+<?xml version="1.0" standalone="yes"?>
+<test>
+	<name>
+		XML test.
+	</name>
+
+	<description>
+		This is merely to test the XML library.
+	</description>
+
+	<integer>15</integer>
+
+	<collection>
+		<entry config-file="config1.xml" port="80" default="yes" />
+		<entry config-file="config2.xml" port="81" default="yes" />
+		<entry config-file="config3.xml" port="81" default="no" />
+	</collection>
+
+	<method>
+		<plugin>
+			<program>/usr/Jorinde/dav/data/davtool</program>
+		</plugin>
+		<plugin>
+			<program>/usr/Jorinde/data/httptool</program>
+		</plugin>
+	</method>
+
+</test>
+

@@ -1,0 +1,128 @@
+#
+# Description: Future structure (documentation).
+# Version:     $Id: Structure 265 2004-08-03 09:58:58Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+Jorinde is the name of a series of projects. This is the general structure
+of this directory and the projects.
+
+Projects:
+	- Jorinde XML
+	- Jorinde HTTPD
+	- Jorinde Lunit
+	- Jorinde Shared Libraries
+	- Jorinde Errorhandler
+	- Jorinde CronD (not yet included)
+
+Direct sub-projects of the httpd (located under httpd/):
+	- Jorinde HTTPD: Test website
+	  (not yet included)
+	- Jorinde HTTPD: 'Official' website (including html:ized versions of /doc)
+	  (not yet included)
+	- Jorinde HTTPD: Documentation (/doc directory)
+
+Several sub-components (plugins) to HTTPD (included, but replacable w/ config):
+	- Jorinde HTTPD: DAV plugin
+	- Jorinde HTTPD: Logger plugin
+	- Jorinde HTTPD: Authorization plugin
+	- Jorinde HTTPD: Error-handler plugin
+	- Jorinde HTTPD: LSP mediahandler plugin
+	- Jorinde HTTPD: C mediahandler plugin
+
+Glues for libraries:
+	- Jorinde HTTPD: Kernel Library Glue (default)
+	- Jorinde HTTPD: Igor Glue
+	- Jorinde HTTPD: Phantasmal Glue
+	  (not yet included, use Kernel Library's glue)
+
+
+-----------------------------------------------------------------------------
+                          DIRECTORY STRUCTURE
+                          updated 03-aug-2004
+-----------------------------------------------------------------------------
+
+.
+|-- Jorinde					(Packages)
+|   |-- doc					(General documentation)			
+|   |-- glue				(Glues for various environments, muds)
+|   |   |-- igor			(Glue for IgorMUD)
+|   |   |   |-- config
+|   |   |   `-- mudlib
+|   |   |       |-- httpd
+|   |   |       `-- kernel
+|   |   `-- kernel			(Glue for Kernel Library, which is default)
+|   |-- httpd				(HTTPD package)
+|   |   |-- config			(Configuration files for HTTPD)
+|   |   |-- data
+|   |   |-- dav				(WebDAV 'plugin' for HTTPD)
+|   |   |   |-- data
+|   |   |   |-- include
+|   |   |   |-- lib
+|   |   |   |-- modules
+|   |   |   |-- obj
+|   |   |   |-- save
+|   |   |   |-- sys
+|   |   |   `-- tests
+|   |   |-- doc				(HTTPD documentation)
+|   |   |   `-- RFC
+|   |   |       `-- RFC
+|   |   |-- errors			(Default error pages (html))
+|   |   |-- include
+|   |   |-- lib
+|   |   |   `-- api
+|   |   |-- mh				(Default mediahandler plugins, for '.lsp' etc)
+|   |   |   `-- lsp
+|   |   |       |-- data
+|   |   |       |-- include
+|   |   |       |-- lib
+|   |   |       `-- sys
+|   |   |-- obj
+|   |   |-- sys
+|   |   `-- tests
+|   |       `-- support
+|   |-- jerror				(Jorinde error-handler for DGD's Kernel Lib)
+|   |   |-- doc
+|   |   |-- include
+|   |   |-- lib
+|   |   `-- sys
+|   |-- jxml				(XML processor)
+|   |   |-- data
+|   |   |-- doc
+|   |   |-- include
+|   |   |-- lib
+|   |   |   `-- std
+|   |   |-- save
+|   |   `-- sys
+|   |-- log					(Various logs)
+|   |-- lunit				(Unit-test framework)
+|   |   |-- data
+|   |   |-- doc
+|   |   |-- include
+|   |   |   `-- internal
+|   |   |-- lib
+|   |   |   `-- api
+|   |   `-- sys
+|   `-- open				(Globally readable directory)
+|       |-- glue
+|       `-- shared			(Shared Libraries etc)
+|           |-- data
+|           |-- doc
+|           |-- include
+|           `-- lib
+|-- System					(Directory for privileged objects)
+|   |-- httpd
+|   |   |-- data
+|   |   |-- include
+|   |   `-- lib
+|   `-- open
+|       `-- httpd
+|           `-- lib
+`-- www						(World Wide Web and related)
+    |-- lsp					(LPC Server Pages related code)
+    |   |-- data
+    |   |-- include
+    |   `-- lib
+    `-- webroot				(The actual web-pages (etc) that should be served)
+        `-- css
+

@@ -1,0 +1,17 @@
+rfc1123.txt		Requirements for Internet Hosts -- Application and Support
+rfc1321.txt		The MD5 Message-Digest Algorithm
+rfc1630.txt		Universal Resource Identifiers in WWW
+rfc1737.txt		Functional Requirements for Uniform Resource Names
+rfc1738.txt		Uniform Resource Locators (URL)
+rfc1808.txt		Relative Uniform Resource Locators
+rfc1864.txt		The Content-MD5 Header Field
+rfc1867.txt		Form-based File Upload in HTML
+rfc1945.txt		Hypertext Transfer Protocol -- HTTP/1.0
+rfc2045.txt		Multipurpose Internet Mail Extensions Part One
+rfc2046.txt		Multipurpose Internet Mail Extensions Part Two
+rfc2047.txt		Multipurpose Internet Mail Extensions Part Three
+rfc2291.txt		Requirements for a Distributed Authoring and Versioning
+rfc2396.txt		Uniform Resource Identifiers (URI): Generic Syntax
+rfc2518.txt		HTTP Extensions for Distributed Authoring -- WEBDAV
+rfc2616.txt		Hypertext Transfer Protocol -- HTTP/1.1
+rfc2617.txt		HTTP Authentication: Basic and Digest Access Authentication

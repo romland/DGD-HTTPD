@@ -1,0 +1,46 @@
+This directory contains the files needed to glue the httpd to Igor.
+
+The mudlib/ directory contains the files which were patched in the mudlib, 
+which will have to be moved elsewhere (obviously).
+---
+
+The *.c files in this directory should be left in this directory.
+
+patched file			move to location (/ is mudroot)
+-------------------------------------------------------------------------
+mudlib/Jorinde		->	/adm/domains/Jorinde
+		- description of the domain
+
+mudlib/System		->	/adm/domains/System
+		- description of the domain
+
+mudlib/config.h		->	/include/config.h
+		- added a # define __HTTPD__ to easily enable/disable it
+
+mudlib/driver.c		->	/kernel/sys/driver.c
+		- added function set_binary_manager() which associated a port
+		  with an object.
+		- static object binary_connect() now takes 'int port' as argument.
+
+mudlib/preload		->	/conf/preload
+		- added players/System/initd
+
+mudlib/httpd/*		->	/obj/secure/player/httpd/*
+		- move this whole directory (only contains one file with one function;
+		  passwd.c->get_password()
+		- adds functionality for http/dav to authenticate a user when they
+		  log in using Basic authentication (it returns a users password)
+
+mudlib/kernel/*		->	/include/kernel/*
+		- move this directory (it contains dummy files to make default 
+		  managers at least compile)
+
+To switch from Kernel to Igor Glue change /usr/Jorinde/open/jorinde.h. 
+You need to change the 'USE_GLUE_FOR_XXX', XXX to IGOR.
+
+That's it. Add security where needed, especially in driver.c, only one object
+should be able to call that one. I deliberately didn't add any security. :P
+
+This will need a security audit or three before it can go into Igor in the
+first place since it counts on the Kernel Library's security mechanism.
+

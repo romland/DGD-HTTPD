@@ -1,0 +1,44 @@
+Nono Thraeryn says: Hmm, your package has an include dir, which contains a
+                    lot of files with same names in the mudlib.
+You think carefully.
+You say: Ah right
+You say: Okay, this is the deal>
+You say: DGD is shipped with its own Kernel Library.
+Nono nods solemnly.
+You say: _nothing_ in the Kernel Library is -modified- in any way.
+Nono Thraeryn says: Yeah, as /dgd/mud/
+Nono nods solemnly.
+You say: So the only thing you -need- is the directories in /usr/
+You say: Then follow the directions in the /usr/Jorinde/glue/
+Nono Thraeryn says: Ahh
+Nono nods solemnly.
+You say: admin you can forget about as well
+Nono nods solemnly.
+You say: So under the Kernel Library the structure is like this: Jorinde
+         contains the actual server, System contains privileged objects which
+         can inherit from the Kernel, and www is the actual webroot (seprated
+         from everything else due to security)
+You say: Under Igor the story is slightly different since Igor doesn't have a
+         privileged directory like System.
+Nono nods solemnly.
+You say: So, in theory, System could go under Igor since it's got no real
+         function -- but I didn't want to move it out of the way for Igor
+         since that would mean duplicate code... So Igor does depend on code
+         in there.
+Nono nods solemnly.
+You say: 'could go' as in 'not needed'
+Nono nods solemnly.
+-------------------
+You say: then when that is done you need to change one file to tell the httpd
+         that you're on Igor: /usr/Jorinde/open/jorinde.h
+----
+Nono Thraeryn says: Did you use the current homemud build?
+You think carefully.
+You say: I -think- so, but then again, I might not have since I was gone for
+         quite some time. :)
+You say: You might want to patch driver.c by hand
+Nono nods solemnly.
+You say: Just check for __HTTPD__ in there
+Nono nods solemnly.
+------------
+

@@ -1,0 +1,50 @@
+#
+# Description: Milestones (documentation).
+# Version:     $Id: Milestones 267 2004-08-04 11:43:01Z romland $
+# License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+#
+
+Overview of milestones.
+
+0.2.0 (- 0.3.0)
+	- First remotely useful version.
+
+0.3.0 (- 0.4.0)
+	- Method/error-page/mediahandler/logging plugins
+	- Simple XML 1.0 processor
+	- Simple server side scripting ability (LSP)
+	- Subset of HTTP/1.0 protocol (server)
+	- Subset of HTTP/1.1 protocol (server)
+	- Subset of WebDAV class 1 protocol (server)
+	- Unit-testing framework (Lunit).
+	- All 'SECURITY' TODO:s should be solved.
+	- Basic authentication
+	- Performance-testing integrated into Lunit
+	- Glue to make it work with Phantasmal.
+	- Glue for IgorMUD 
+	- Finishing Digest authentication (minor things left)
+	- Release of source around here somewhere (it was released around 0.3.13)
+
+0.4.0 (- 0.5.0)
+	- WebDAV Class 1 compliancy
+	- Bug/TODO fixing
+	- Improve LSP and related programs (eg. make it usable)
+	- Support for home-directories (~)
+	- Server-side-includes (SSI)
+	- Speed up throughput of large files (See bug in TODO)
+	- HTTP file browser (for directories that allow file-listing)
+
+1.0.0
+	- !
+
+?.?.? (- ?.?.?)
+	- WebDAV Class 2 compliancy
+	- Passive FTP?
+	- Finger?
+	- LDAP?
+	- Subversion DAV support (aka mod_svn), how tricky, do we want it?
+	- SSL?
+	- Banning of IP-numbers/names for anonymous access, if I decide
+	  that it belongs in the httpd (this would probably mostly be 
+	  used for WebDAV applications.).
+

@@ -1,0 +1,69 @@
+<!--
+	Description: Server configuration.
+	Version:     $Id: server.xml 220 2004-06-16 20:28:52Z romland $
+	License:     (c)2004 Joakim Romland, see Jorinde/doc/License
+-->
+<?xml version="1.0" standalone="yes"?>
+<server>
+	<name>
+		Default server with two applications.
+	</name>
+
+	<description>
+		This is the default configuration used by Jorinde httpd after 
+		installation. For future reference you might not want to modify
+		this file without at least making a backup of it first.
+	</description>
+
+	<!-- Keep-alive value for HTTP (1.1) connections -->
+	<keep-alive>14</keep-alive>
+
+	<!-- Timeout value for tcp connection -->
+	<timeout>15</timeout>
+
+	<!-- 
+		Applications to be started when DGD starts and which port they
+		should be associated with. Note that you need to have DGD listening
+		to these ports in its configuration file.
+	-->
+	<applications>
+		<application config-file="default-app.xml" port="80" default="yes" />
+		<application config-file="dav.xml" port="81" default="yes" />
+	</applications>
+
+	<!-- Various plugins -->
+	<plugins>
+		<!-- Plugins for methods supported by httpd (GET/POST/PROPFIND etc) -->
+		<method>
+			<plugin>
+				<program>/usr/Jorinde/httpd/dav/data/davtool</program>
+			</plugin>
+			<plugin>
+				<program>/usr/Jorinde/httpd/data/httptool</program>
+			</plugin>
+		</method>
+
+		<!-- Plugin for authentication -->
+		<authentication>
+			<plugin>
+				<program>/usr/System/httpd/authenticated</program>
+			</plugin>
+		</authentication>
+
+		<!-- Plugin for authorization -->
+		<authorization>
+			<plugin>
+				<program>/usr/System/httpd/accessd</program>
+			</plugin>
+		</authorization>
+
+		<!-- Plugin for logging to screen (stdout) -->
+		<loghandler>
+			<plugin>
+				<program>/usr/System/httpd/syslogd</program>
+			</plugin>
+		</loghandler>
+	</plugins>
+
+</server>
+
