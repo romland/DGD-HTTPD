@@ -57,7 +57,6 @@ inherit "/lib/lwo";
 private object	infod;
 private mapping	methods, supported;
 
-
 static void create(varargs int clone)
 {
 #ifdef __NO_CREATE_CLONE_ARG__
@@ -67,6 +66,7 @@ static void create(varargs int clone)
 #endif
 
 	tool::create();
+	dav::create();
 
 	set_version("WebDAV",	DAV_VERSION);
 	set_method("PROPFIND",	"cmd_propfind");
@@ -171,11 +171,18 @@ private mixed get_prop_value(string prop, string resource, string xmlns,
 		string tmp;
 		switch(prop) {
 		case DAVP_CREATIONDATE :
-			v = datetime_rfc1123(0);	/* No support in DGD for creation */
+			v = datetime_tz(0);	/* No support in DGD for creation */
+
+#if 0	/* WinXP */
+			v = "2004-03-17T18:14:29.458Z";
+#endif
 			break;
 
 		case DAVP_DISPLAYNAME :
 			v = finfo[0];
+#if 0	/* WinXP might expect / instead of . ? */
+			v = "/";
+#endif
 			break;
 
 		case DAVP_GETCONTENTLANGUAGE :
@@ -208,7 +215,12 @@ private mixed get_prop_value(string prop, string resource, string xmlns,
 			break;
 		
 		case DAVP_RESOURCETYPE :
+#ifdef USE_DAV_ALIASES
+			v = ((finfo[1] == -2) ? new_node(get_alias("DAV:") + 
+											":collection") : nil);
+#else
 			v = ((finfo[1] == -2) ? new_node("collection") : nil);
+#endif
 			break;
 		
 		case DAVP_SOURCE :
@@ -496,7 +508,14 @@ int cmd_propfind(object request, object response)
 	uri = request->get_uri();
 	
 	doc = new_xmldoc();
+
+#ifdef USE_DAV_ALIASES
+	root = new_node(get_alias("DAV:") + ":multistatus");
+	set_aliases(root);
+#else
 	root = new_node("multistatus");
+#endif
+
 	doc->insert(root);
 
 	host = "http://" +
@@ -527,8 +546,14 @@ int cmd_propfind(object request, object response)
 	response->add_content( doc->xml() );
 	response->update_content_length();
 
+#if 0 /* This response works for WinXP */
+	response->clear_content();
+	response->add_content( "<?xml version=\"1.0\"?><a:multistatus xmlns:b=\"urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882/\" xmlns:c=\"xml:\" xmlns:a=\"DAV:\"><a:response><a:href>http://roulette/</a:href><a:propstat><a:status>HTTP/1.1 200 OK</a:status><a:prop><a:getcontentlength b:dt=\"int\">0</a:getcontentlength><a:creationdate b:dt=\"dateTime.tz\">2004-03-17T18:14:29.458Z</a:creationdate><a:displayname>/</a:displayname><a:getetag>\"29114e04bcc41:1520\"</a:getetag><a:getlastmodified b:dt=\"dateTime.rfc1123\">Wed, 17 Mar 2004 18:15:49 GMT</a:getlastmodified><a:resourcetype><a:collection/></a:resourcetype><a:supportedlock/><a:ishidden b:dt=\"boolean\">0</a:ishidden><a:iscollection b:dt=\"boolean\">1</a:iscollection><a:getcontenttype/></a:prop></a:propstat></a:response></a:multistatus>" );
+	response->update_content_length();
+#endif
+
 	debug_info(request, response);
-	
+
 	if(!send(response, TRUE, TRUE)) {
 		SYSLOG("WARNING: davtool->cmd_propfind() failed to send\n");
 	}

@@ -61,3 +61,4 @@
 # define DP_NAME_ONLY       3
 # define DP_SIZE            4
 
+# define USE_DAV_ALIASES

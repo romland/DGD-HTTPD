@@ -12,8 +12,11 @@
 # include "../include/www.h"
 # include "../include/access.h"
 
-#define DEBUG_TRAFFIC
+#define DEBUG_TRAFFIC_VERBOSE
+#define DEBUG_INFO
+#define DEBUG_WARNINGS
 /*
+#define DEBUG_TRAFFIC
 #define DEBUG_TRAFFIC_VERBOSE
 #define DEBUG_DATA
 #define DEBUG_INFO

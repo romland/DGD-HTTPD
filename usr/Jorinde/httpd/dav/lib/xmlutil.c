@@ -22,12 +22,13 @@ object new_node(string name, varargs string xmlns)
 	o = new_object(NODE);
 	o->constructor(-1);
 	o->setName(name);
-
+#if 0
 	if(!xmlns) {
 		xmlns = "DAV:";
 	}
 
 	o->setAttribute("xmlns", xmlns);
+#endif
 	return o;
 }
                                                                                 

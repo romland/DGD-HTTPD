@@ -204,3 +204,38 @@ static int datetime_to_int(string val)
 	}
 }
 
+/*
+ * Motherfucker. The reason my WebDAV implementation didn't work with
+ * Windows WebFolders piece of crap was because it barfed on the 
+ * CreationDate property. Apparently it expects it to be of format
+ * 2004-03-17T18:14:29.458Z.
+ *
+ * C-style format, RFC2068 or RFC1123 was barfed upon.
+ *
+ * Bollocks. The time I wasted on this shit.
+ *
+ * // JR 16jan2005
+ *
+ * DGD:		Wed Jan 21 20:10:25 2004
+ * MS-TZ:	2004-03-17T18:14:29.458Z 
+ */
+static string datetime_tz(int arg)
+{
+	string x, m, d;
+
+	x = lower_case(ctime(arg));
+
+	m = (string)(index_of_arr(x[4..6], SHORTMONTHS)+1);
+	m = (strlen(m) == 1 ? "0" + m : m);
+
+	d = x[8..9];
+	if(d[0] == ' ') {
+		d[0] = '0';
+	}
+
+	return	x[20..23]	+ "-" +
+			m			+ "-" +
+			d			+ "T" + 
+			x[11..18]	+ "." +
+			"000Z";
+}

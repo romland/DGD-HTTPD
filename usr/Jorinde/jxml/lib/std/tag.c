@@ -112,6 +112,7 @@ void setTypeName(string s)
 void setName(string s)
 {
 	int i;
+#if 0
 	if((i = index_of(0, s, ":")) != -1) {
 		/* TODO: We need to implement support for XML namespaces. It's just
 		 * hacked together to get it to work with WebDAV now. If a name 
@@ -124,6 +125,7 @@ void setName(string s)
 		this_object()->setAttribute("xmlns", s[0..i]);
 		s = s[i+1..];
 	}
+#endif
 	_name = s;
 }
 

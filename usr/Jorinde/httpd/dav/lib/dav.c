@@ -12,11 +12,40 @@ inherit str		LIB_HTTP_STRING;
 inherit util	LIB_XML_UTIL;
 inherit "./xmlutil";
 
+#ifdef USE_DAV_ALIASES
+private mapping aliases;
+#endif
+
 nomask User get_owner();
+
 
 static void create()
 {
+#ifdef USE_DAV_ALIASES
+	aliases = ([ ]);
+	aliases["DAV:"] = "d";
+	aliases["JOR:"] = "j";
+#endif
 }
+
+
+#ifdef USE_DAV_ALIASES
+static void set_aliases(object node)
+{
+	string *keys;
+	int i;
+	keys = map_indices(aliases);
+	for(; i < sizeof(keys); i++) {
+		node->setAttribute("xmlns:" + aliases[keys[i]], keys[i]);
+	}
+}
+
+
+static string get_alias(string alias)
+{
+	return aliases[alias];
+}
+#endif
 
 
 static string get_relative_destination(object request)
@@ -91,7 +120,17 @@ static object create_dav_property(string key, mixed value, string xmlns,
 {
 	object prop, tmp;
 
+	if(!xmlns) {
+		xmlns = "DAV:";
+	}
+
+#ifdef USE_DAV_ALIASES
+	tmp = new_node(aliases[xmlns] + ":" + key);
+	SYSLOG("Creating newstyle: " + tmp->getName() + "\n");
+#else
 	tmp = new_node(key);
+#endif
+
 	if(!name_only) {
 		switch(typeof(value)) {
 		case T_OBJECT :
@@ -106,11 +145,10 @@ static object create_dav_property(string key, mixed value, string xmlns,
 		}
 	}
 
-	if(!xmlns) {
-		xmlns = "DAV:";
-	}
-
+#ifndef USE_DAV_ALIASES
 	tmp->setAttribute("xmlns", xmlns);
+#endif
+
 	return tmp;
 }
 
@@ -176,15 +214,24 @@ static object *create_propstat(mapping props)
 	statuses = get_propstat_groups(props);
 	ret = allocate(sizeof(statuses));
 	for(j = 0; j < sizeof(statuses); j++) {
+#ifdef USE_DAV_ALIASES
+		ret[j] = new_node(aliases["DAV:"] + ":propstat");
+		tmp = new_node(aliases["DAV:"] + ":status");
+#else
 		ret[j] = new_node("propstat");
-
 		tmp = new_node("status");
+#endif
+
 		tmp->insert( new_data(get_status_string(statuses[j])) );
 		ret[j]->insert( tmp );
 
 		tmpprops = get_propstat_group(statuses[j], props);
 		propnames = map_indices(tmpprops);
+#ifdef USE_DAV_ALIASES
+		prop = new_node(aliases["DAV:"] + ":prop");
+#else
 		prop = new_node("prop");
+#endif
 		ret[j]->insert(prop);
 		for(i = 0; i < map_sizeof(tmpprops); i++) {
 			prop->insert(create_dav_property(propnames[i], 
@@ -203,9 +250,13 @@ static object create_response(string href, mapping props, int iscol)
 	int		i;
 	object	ret, tmp, *propstat, prop;
 
+#ifdef USE_DAV_ALIASES
+	ret = new_node(aliases["DAV:"] + ":response");
+	tmp = new_node(aliases["DAV:"] + ":href");
+#else
 	ret = new_node("response");
-
 	tmp = new_node("href");
+#endif
 	tmp->insert(new_data(href));
 	ret->insert(tmp);
 
@@ -215,7 +266,11 @@ static object create_response(string href, mapping props, int iscol)
 	}
 
 #if 0
+#ifdef USE_DAV_ALIASES
+	tmp = new_node(aliases["DAV:"] + ":status");
+#else
 	tmp = new_node("status");
+#endif
 	tmp->insert(new_data(get_status_string(status)));
 	propstat->insert(tmp);
 #endif
