@@ -1,3 +1,8 @@
+/**
+ * Description: Headers for indexd.
+ * Version:     $Id$
+ * License:     (c)2004 Joakim Romland, see doc/License
+ */
 # include "../open/jorinde.h"
 
 # define INDEX_LIB		JORINDE_INDEX+"lib/index"

@@ -1,3 +1,9 @@
+#
+# Description: README for indexd.
+# Version:     $Id$
+# License:     (c)2004 Joakim Romland, see doc/License
+#
+
 This was THROWN together in a couple of hours on 08aug2004 just to 
 see if it would be feasable to have a full-text search on things
 under DGD.

@@ -1,3 +1,10 @@
+/**
+ * Description: Handles pointing from index to a specific position in a 
+ *				specific file.
+ * Version:     $Id$
+ * License:     (c)2004 Joakim Romland, see doc/License
+ */
+
 /*
  * Mapping pointers:
  *		([ fileid : ({ word's positions }) ])

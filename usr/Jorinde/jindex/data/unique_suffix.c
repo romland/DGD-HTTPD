@@ -1,3 +1,9 @@
+/**
+ * Description: Handler for unique (in the index) suffix of a word.
+ * Version:     $Id$
+ * License:     (c)2004 Joakim Romland, see doc/License
+ */
+                                                                                
 # include "../open/jorinde.h"
 # include "../include/index.h"
                                                                                 
