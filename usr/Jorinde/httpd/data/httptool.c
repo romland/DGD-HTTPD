@@ -249,11 +249,13 @@ int cmd_get(object request, object response)
 
 	/* redirect user-agent if requested _file_ is a directory */
 	if(list[1][0] < 0) {
-		SYSLOG("redirecting\n");
+		SYSLOG("redirecting, rel-path: " + uri->get_relative_path() + 
+				", filename: " + uri->get_filename() + "\n");
 		response->set_status(302);
 		response->set_header("Content-Length", 0);
 		response->set_header("Location", 
-				uri->get_relative_path() + uri->get_filename() + "/");
+				"/" + uri->get_relative_path() + uri->get_filename() + "/" +
+				app->default_document(uri->get_relative_path() + uri->get_filename()) );
 		send(response, TRUE, FALSE);
 		return TRUE;
 	}
