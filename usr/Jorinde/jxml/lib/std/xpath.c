@@ -119,7 +119,6 @@ object *xpath(string str, varargs mixed index)
 		mixed *tmp;
 		tmp = ({ nodes[i]->xpath( str, (index + 1) ) });
 		if(tmp != nil) {
-/*			SYSLOG("adding '" + nodes[i]->getName() + "' to ret...\n");*/
 			ret += tmp;
 		}
 	}
@@ -134,34 +133,72 @@ object *xpath(string str, varargs mixed index)
 }
 
 
+private mapping get_attributes(string str)
+{
+	int i;
+	string *arr;
+	mapping ret;
+
+	ret = ([ ]);
+
+	arr	= explode(str, "[");
+
+	for(i = 0; i < sizeof(arr); i++) {
+		string key, val;
+
+		if(strlen(arr[i]) && (sscanf(arr[i], "@%s=%s]", key, val) == 2 ||
+			sscanf(arr[i], "@%s=%s]%*s", key, val) == 3)) {
+			ret[key] = val;
+		}
+	}
+
+	return ret;
+}
+
+
+private int attributesMatch(object node, mapping attribs)
+{
+	int i;
+	string *keys;
+
+	if(!node || !attribs || !map_sizeof(attribs)) {
+		return TRUE;
+	}
+
+	keys = map_indices(attribs);
+
+	for(i = 0; i < sizeof(keys); i++) {
+		if(!(node->matchAttribute(keys[i], attribs[keys[i]]))) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+
 private object *getXpathNodes(string name) 
 {
 	int i;
 	object *ret, *contents;
-	string nodename, attrpair, attrname, attrvalue;
+	string nodename;
+	mapping attribs;
 
-	if(sscanf(name, "%s[@%s]", nodename, attrpair) == 2) {
-		/* Attribute matching */
-		sscanf(attrpair, "%s=%s", attrname, attrvalue) == 2;
-		SYSLOG("match attribute: " + attrname + " = " + attrvalue + "\n");
-	}
-/*	else if(sscanf(name, "%s(%s)%s", fun, arg, rest) > 1) {
-		/ * Evaluate expression * /
-		SYSLOG("getXpathNodes() expression: TODO!\n");
-	}
-*/
-	else {
-		/* Plain name matching */
+	if(sscanf(name, "%s[@%*s", nodename) == 2) {
+		attribs = get_attributes(name);
+
+	} else if(sscanf(name, "%*s(%*s)%*s") == 3) {
+		error("TODO: Expression evaluation not implemented");
+	
+	} else {
 		nodename = name;
-		attrpair = nil;
+		attribs = ([ ]);
 	}
 
 	ret = ({ });
 	contents = this_object()->getContents();
 	for(i = 0; i < sizeof(contents); i++) {
 		if((nodename == "*" || contents[i]->getName() == nodename) &&
-				(attrpair == nil  ||
-				 contents[i]->matchAttribute(attrname, attrvalue) == TRUE)) {
+		   attributesMatch(contents[i], attribs) == TRUE) {
 			SYSLOG("found "+nodename+" ("+object_name(contents[i])+")\n");
 			ret += ({ contents[i] });
 		}
