@@ -4,7 +4,7 @@
 #endif
 # define AssessCost()       (status()[ST_TICKS])
 # define GetCost(c)         (c-status()[ST_TICKS])
-# define OutputCost(t, c)   (SYSLOG(ralign(t,16)+": "+ralign(pretty_number(c)+"\n", 12)))
+# define OutputCost(t, c)   (SYSLOG(ralign(t,16)+": "+ralign(pretty_number(c), 12) + " ticks\n"))
 
 /*
  * Define this to enable tests on Phantasmal's objectd. I guess it could
@@ -17,6 +17,6 @@
 /*
  * Define this if you want to test the indexing crap :)
  */
-#if 0
+#if 1
 # define __TEST_INDEXD__
 #endif
