@@ -421,6 +421,25 @@ static Request create_request(string str)
 		}
 	}
 
+	/* Hack, we take for granted (twice) that version is 3 bytes */
+	if(ver && strlen(ver) > 3) {
+		string key, val;
+		/*
+		 * This is a BUG, and I -think- it is in the client. What happens
+		 * is basically that \r\n is missing between HTTP-version and
+		 * the first header after that (Connection for instance). This makes
+		 * the request look like this:
+		 * GET / HTTP/1.1Connection: Keep-Alive
+		 *
+		 * I know that Konqueror sometimes trigger this behaviour and throws
+		 * an error saying "Connection is broken". This is due to the fact
+		 * that we did not -see- the Connection header which is supposedly
+		 * set to "Keep-Alive", so, our default behaviour is closing.
+		 */
+		SYSLOG("WARNING: version is a -long- string [" + ver + "]\n");
+		head = ver[3..] + "\r\n" + head;
+	}
+	
 	request->set_headers(head);
 	request->set_command(cmd);
 	request->set_protocol_version(ver);
