@@ -5,7 +5,7 @@
  *				size is (MAX_STRING_SIZE * dgd->array_size), which I have
  *				set to 65536 and 3000 respectively. This gives me a maximum
  *				of approximately 192 megabytes.
- * Version:     $Id: bstr.c 192 2004-06-11 22:07:24Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

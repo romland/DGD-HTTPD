@@ -2,7 +2,7 @@
  * Description: Implements the WebDAV file-based methods supported by Jorinde.
  *				TODO: Lots and lots of code-cleanup can be done in here,
  *				including plenty of duplicate code.
- * Version:     $Id: davtool.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

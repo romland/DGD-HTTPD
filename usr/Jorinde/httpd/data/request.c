@@ -1,6 +1,6 @@
 /**
  * Description: Request.
- * Version:     $Id: request.c 280 2004-08-06 13:01:32Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,6 +1,6 @@
 /**
  * Description: Initialize http-related objects in ~System.
- * Version:     $Id: initd.c 294 2004-08-12 08:42:30Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

@@ -1,7 +1,7 @@
 /**
  * Description: Handles and prettifies errors for output on scripted
  *				web-pages (LSP's)
- * Version:     $Id: htmlerrord.c 172 2004-06-01 19:34:08Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include <kernel/kernel.h>

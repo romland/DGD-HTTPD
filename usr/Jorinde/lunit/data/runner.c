@@ -2,7 +2,7 @@
  * Description: Start a test-run, this will call the suite and collect 
  *				the result from all tests and output failures (or 'all 
  *				tests successful').
- * Version:     $Id: runner.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

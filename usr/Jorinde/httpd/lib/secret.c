@@ -2,7 +2,7 @@
  * Description: Container for digest-secrets (right to exist: performance),
  *				the reason we don't use application properties for these is
  *				simply because they are ... secrets.
- * Version:     $Id: secret.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,6 +1,6 @@
 /**
  * Description: Initialize Searching/indexing engine.
- * Version:     $Id:$
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../open/jorinde.h"

@@ -1,6 +1,6 @@
 /**
  * Description: Let the httpd log to stdout (mainly for debugging).
- * Version:     $Id: syslogd.c 240 2004-06-24 08:05:28Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

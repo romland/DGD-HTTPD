@@ -1,6 +1,6 @@
 /**
  * Description: HTTP access-logging daemon.
- * Version:     $Id: ncsa_log.c 210 2004-06-15 08:27:28Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

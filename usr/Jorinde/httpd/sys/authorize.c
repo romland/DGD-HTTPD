@@ -1,6 +1,6 @@
 /**
  * Description: Layer above actual access-daemon, deals with anonymous access.
- * Version:     $Id: authorize.c 287 2004-08-07 14:53:35Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

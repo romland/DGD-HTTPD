@@ -1,6 +1,6 @@
 /**
  * Description: Headers related to authentication and authorization.
- * Version:     $Id: access.h 211 2004-06-15 09:06:29Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

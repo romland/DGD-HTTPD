@@ -1,6 +1,6 @@
 /**
  * Description: Implements the methods we support in HTTP specification.
- * Version:     $Id: httptool.c 277 2004-08-06 11:56:55Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

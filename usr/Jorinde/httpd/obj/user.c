@@ -1,6 +1,6 @@
 /**
  * Description: User-object for Jorinde (http/dav).
- * Version:	 $Id: user.c 277 2004-08-06 11:56:55Z romland $
+ * Version:	 $Id$
  * License:	 (c)2004 Joakim Romland, see doc/License
  */
 # include <kernel/kernel.h>

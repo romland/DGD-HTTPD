@@ -1,6 +1,6 @@
 /**
  * Description: General purpose date and time library.
- * Version:     $Id: date.c 255 2004-07-09 14:45:41Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../include/shared.h"

@@ -2,7 +2,7 @@
  * Description: Take care of incoming binary connections and clone user-object
  *				on behalf of data/port.c (which is assigned to be the manager
  *				out of the Kernel's perspective).
- * Version:     $Id: binaryd.c 230 2004-06-21 09:38:41Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

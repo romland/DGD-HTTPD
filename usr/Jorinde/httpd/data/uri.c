@@ -1,7 +1,7 @@
 /**
  * Description: URI. Scheme // authority : port / path ? query # fragment
  *				Ex: http://host.com:81/blah.html?arg=value&arg2=value2#section
- * Version:     $Id: uri.c 265 2004-08-03 09:58:58Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

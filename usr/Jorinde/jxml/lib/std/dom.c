@@ -1,6 +1,6 @@
 /**
  * Description: Very minimal DOM implementation (all I need up until now).
- * Version:     $Id: dom.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # define LOG_LEVEL_DEBUG

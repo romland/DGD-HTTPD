@@ -1,6 +1,6 @@
 /**
  * Description: Grants access to querying access in accessd for everyone.
- * Version:     $Id: accessd.c 55 2004-04-05 08:33:49Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

@@ -1,6 +1,6 @@
 /**
  * Description: Helper functions for command-plugins (and, perhaps others).
- * Version:  $Id: command_plugins.c 190 2004-06-10 09:09:39Z romland $
+ * Version:  $Id$
  * License:  (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,7 +1,7 @@
 /**
  * Description: Implements 'persistent' http-sessions that's kept alive longer
  *              than an actual user object.
- * Version:     $Id: session.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,6 +1,6 @@
 /**
  * Description: Verify a user's password.
- * Version:     $Id: authenticated.c 219 2004-06-16 08:44:39Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

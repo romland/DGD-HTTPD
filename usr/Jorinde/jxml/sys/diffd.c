@@ -1,6 +1,6 @@
 /**
  * Description: Subscribe to changes of an XML-document.
- * Version:     $Id: diffd.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../include/xml.h"

@@ -2,7 +2,7 @@
  * Description: Functionality inherited by user-object, not sure how useful
  *				it would be to anything other than the httpd-user-ob, but
  *				it's a nice thought. :)
- * Version:  $Id: buff_user.c 190 2004-06-10 09:09:39Z romland $
+ * Version:  $Id$
  * License:  (c)2004 Joakim Romland, see doc/License
  */
 

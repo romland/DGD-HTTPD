@@ -1,7 +1,7 @@
 /**
  * Description: All test-suites should inherit this. A test_suite is a
  *				composite of tests.
- * Version:     $Id: testsuite.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

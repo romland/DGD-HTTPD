@@ -1,6 +1,6 @@
 /**
  * Description: Application. This keeps track of each 'website' and related.
- * Version:     $Id: app.c 259 2004-07-13 20:32:07Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

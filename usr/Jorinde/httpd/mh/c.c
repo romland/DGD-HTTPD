@@ -1,6 +1,6 @@
 /**
  * Description: Mediahandler for files ending with '.c' (see as an example).
- * Version:     $Id: c.c 181 2004-06-02 13:05:48Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include <kernel/kernel.h>

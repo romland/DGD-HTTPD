@@ -1,6 +1,6 @@
 /**
  * Description: Implements functionality for arbitrary properties.
- * Version:     $Id: properties.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

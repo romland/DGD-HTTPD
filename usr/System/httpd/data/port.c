@@ -5,7 +5,7 @@
  *				object. Originally we had the binary-manager take care of
  *				all http-related ports and that works fine if all applications
  *				listen to the same port.
- * Version:     $Id: port.c 230 2004-06-21 09:38:41Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

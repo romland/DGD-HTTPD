@@ -1,6 +1,6 @@
 /**
  * Description: Helper class for LSP's (handles compile and recompile etc).
- * Version:     $Id: compile.c 209 2004-06-14 22:59:30Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include <kernel/kernel.h>

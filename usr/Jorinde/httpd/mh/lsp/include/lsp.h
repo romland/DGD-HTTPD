@@ -1,6 +1,6 @@
 /**
  * Description: Headers used by LSP and it's related classes.
- * Version:     $Id: lsp.h 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # define LSP_VERSION			"0.0.1"

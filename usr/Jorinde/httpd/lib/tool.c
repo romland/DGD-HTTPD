@@ -1,6 +1,6 @@
 /**
  * Description: Implements basic functionality needed by http (etc.) methods.
- * Version:     $Id: tool.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,6 +1,6 @@
 /**
  * Description: Sessions functionality support for HTTP-applications.
- * Version:     $Id: session.c 209 2004-06-14 22:59:30Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 #include <kernel/kernel.h>

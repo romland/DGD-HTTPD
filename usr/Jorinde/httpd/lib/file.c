@@ -1,7 +1,7 @@
 /**
  * Description: Perform file operations using standard e/kfuns or forward
  *				the operations to the access-elevation layer in webroot. 
- * Version:     $Id: file.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -2,7 +2,7 @@
  * Description: Read the correct error-page for http-errors. This file might
  *				need quite a bit of work in order to be 'hookable' to alien
  *				environments.
- * Version:     $Id: statusd_400_500.c 220 2004-06-16 20:28:52Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 # include <kernel/kernel.h>

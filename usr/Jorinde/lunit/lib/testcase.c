@@ -1,7 +1,7 @@
 /**
  * Description: All test-cases should inherit this.	A test case defines the
  *				fixture to run multiple tests.
- * Version:     $Id: testcase.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

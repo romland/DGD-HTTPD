@@ -1,7 +1,7 @@
 /**
  * Description: Interface for handling pending incoming request-content. It
  *              will act as a collection if the data is of type multipart.
- * Version:     $Id: content.c 289 2004-08-08 21:46:48Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

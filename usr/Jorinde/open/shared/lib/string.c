@@ -1,6 +1,6 @@
 /**
  * Description: General purpose string library.
- * Version:     $Id: string.c 168 2004-06-01 19:31:01Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,6 +1,6 @@
 /*
  * Description: Enable anonymous access to this directory.
- * Version:     $Id: access.c 231 2004-06-21 09:39:11Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 # include "./jorinde.h"

@@ -5,7 +5,7 @@
  *				master objects located in data/ as well -- those are 
  *				LWO:s -- if an LWO's master object is destroyed so are 
  *				all its 'clones'. Handle with care.
- * Version:     $Id: reload.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 #include "../include/xml.h"

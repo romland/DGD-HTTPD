@@ -1,6 +1,6 @@
 /**
  * Description: Response.
- * Version:     $Id: response.c 242 2004-06-24 08:14:15Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

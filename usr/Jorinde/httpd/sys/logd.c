@@ -1,6 +1,6 @@
 /**
  * Description: Handle logging to screen for Jorinde.
- * Version:     $Id: logd.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

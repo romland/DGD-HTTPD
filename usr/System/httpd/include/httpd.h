@@ -1,6 +1,6 @@
 /**
  * Description: Defines on the ~System side of things.
- * Version:     $Id: httpd.h 243 2004-06-24 09:40:53Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 # include "../../jorinde.h"

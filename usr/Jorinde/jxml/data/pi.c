@@ -1,6 +1,6 @@
 /**
  * Description: XML PI object (very much todo).
- * Version:     $Id: pi.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 #include "../include/xml.h"

@@ -1,6 +1,6 @@
 /**
  * Description: Initialize the unit-testing framework.
- * Version:     $Id: initd.c 246 2004-06-24 17:52:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../open/jorinde.h"

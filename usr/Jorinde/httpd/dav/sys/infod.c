@@ -4,7 +4,7 @@
  *				handle swapping out of single storage-objects (that's why 
  *				we're not using LWO's) and this daemon will only initialize
  *				storages as they are used.
- * Version:     $Id: infod.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

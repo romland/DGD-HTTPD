@@ -1,7 +1,7 @@
 /**
  * Description: A container for a test, it will keep information on what
  *				is being tested and what the result of the test was.
- * Version:     $Id: test.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../include/path.h"

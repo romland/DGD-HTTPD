@@ -1,6 +1,6 @@
 /**
  * Description: Initialize Jorinde shared libraries.
- * Version:     $Id: initd.c 210 2004-06-15 08:27:28Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

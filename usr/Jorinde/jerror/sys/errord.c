@@ -2,7 +2,7 @@
  * Description: Error-handler which supports multiple error-handlers and
  *				forwards each error to multiple daemons depending on what
  *				they wanted to get (depending on path).
- * Version:     $Id: errord.c 285 2004-08-06 14:54:11Z romland $
+ * Version:     $Id$
  * License:     see Jorinde/doc/License
  */
 

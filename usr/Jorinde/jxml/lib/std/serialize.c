@@ -1,6 +1,6 @@
 /**
  * Description: Class for serializing an XML-node to XML-string.
- * Version:     $Id: serialize.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # define LOG_LEVEL_DEBUG

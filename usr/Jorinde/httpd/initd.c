@@ -1,6 +1,6 @@
 /**
  * Description:	Initialize httpd.
- * Version:		$Id: initd.c 220 2004-06-16 20:28:52Z romland $
+ * Version:		$Id$
  * License:		(c)2004 Joakim Romland, see doc/License
  */
 # include <kernel/kernel.h>

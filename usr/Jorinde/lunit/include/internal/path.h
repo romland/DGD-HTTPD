@@ -1,6 +1,6 @@
 /**
  * Description: Useful headers.
- * Version:     $Id: path.h 246 2004-06-24 17:52:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../../../open/jorinde.h"

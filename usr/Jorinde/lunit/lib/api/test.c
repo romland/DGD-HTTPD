@@ -1,6 +1,6 @@
 /**
  * Description: API for tests by test_cases.
- * Version:     $Id: test.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

@@ -1,6 +1,6 @@
 /**
  * Description: Wrapper class for server that's used by LSP's.
- * Version:     $Id:$
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include <kernel/kernel.h>

@@ -9,7 +9,7 @@
  *              have events implemented in a way we need them to be.
  *
  *              This can be improved by catching/unsubscribing etc.
- * Version:     $Id: events.c 167 2004-06-01 08:42:16Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 

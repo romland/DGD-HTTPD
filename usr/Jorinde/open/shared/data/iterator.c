@@ -1,7 +1,7 @@
 /**
  * Description: Iterator implementation. Programs wanting to provide an
  *				iterator should inherit and implement lib/iterator.c
- * Version:     $Id: iterator.c 226 2004-06-20 21:58:43Z romland $
+ * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../include/shared.h"
