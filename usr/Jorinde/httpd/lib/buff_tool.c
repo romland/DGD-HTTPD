@@ -59,8 +59,8 @@ nomask static int write_resource(Request request, Response response,
 		error("ranges not supported\n");
 	}
 
-	fn = request->get_absolute_filename();
-	rlimits( 0; -1) {
+	fn = request->get_uri()->get_absolute_filename();
+	rlimits( 0; 1500000) {
 		/* All of this is TODO */
 		if(offset == -1 && length == -1) {
 			/* ... */
