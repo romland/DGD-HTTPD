@@ -30,20 +30,50 @@ static void create()
 
 
 #ifdef USE_DAV_ALIASES
+/*
+ * TODO: Bad name: It actually sets alias-list on node
+ */
 static void set_aliases(object node)
 {
 	string *keys;
 	int i;
 	keys = map_indices(aliases);
 	for(; i < sizeof(keys); i++) {
+		/* Generate alias-list. Eg: <foo xmlns:a="http://foo-bar" xmlns:b=...*/
 		node->setAttribute("xmlns:" + aliases[keys[i]], keys[i]);
+	}
+}
+
+/* Do not confuse with method above */
+static void set_alias(string namespace)
+{
+	int i;
+	string *vals;
+	string letter;
+
+	if(aliases[namespace]) {
+		/* Already set */
+		return;
+	}
+
+	vals = map_values(aliases);
+	for(; i < sizeof(vals); i++) {
+		if(i > 25) {
+			error("Error: Cannot generate more than 25 aliases for now.");
+		}
+
+		letter = chr('a' + i);
+		if(!is_member(letter, vals)) {
+			aliases[namespace] = letter;
+			break;
+		}
 	}
 }
 
 
 static string get_alias(string alias)
 {
-	return aliases[alias];
+	return (aliases[alias] ? aliases[alias] : "");
 }
 #endif
 
@@ -125,8 +155,8 @@ static object create_dav_property(string key, mixed value, string xmlns,
 	}
 
 #ifdef USE_DAV_ALIASES
-	tmp = new_node(aliases[xmlns] + ":" + key);
-	SYSLOG("Creating newstyle: " + tmp->getName() + "\n");
+	tmp = new_node(key);
+	tmp->setNamespace(get_alias(xmlns));
 #else
 	tmp = new_node(key);
 #endif
@@ -215,8 +245,11 @@ static object *create_propstat(mapping props)
 	ret = allocate(sizeof(statuses));
 	for(j = 0; j < sizeof(statuses); j++) {
 #ifdef USE_DAV_ALIASES
-		ret[j] = new_node(aliases["DAV:"] + ":propstat");
-		tmp = new_node(aliases["DAV:"] + ":status");
+		ret[j] = new_node("propstat");
+		ret[j]->setNamespace(get_alias("DAV:"));
+
+		tmp = new_node("status");
+		tmp->setNamespace(get_alias("DAV:"));
 #else
 		ret[j] = new_node("propstat");
 		tmp = new_node("status");
@@ -228,12 +261,16 @@ static object *create_propstat(mapping props)
 		tmpprops = get_propstat_group(statuses[j], props);
 		propnames = map_indices(tmpprops);
 #ifdef USE_DAV_ALIASES
-		prop = new_node(aliases["DAV:"] + ":prop");
+		prop = new_node("prop");
+		prop->setNamespace(get_alias("DAV:"));
 #else
 		prop = new_node("prop");
 #endif
 		ret[j]->insert(prop);
 		for(i = 0; i < map_sizeof(tmpprops); i++) {
+#if 0
+			SYSLOG("prop: " + propnames[i] + "\n");
+#endif
 			prop->insert(create_dav_property(propnames[i], 
 									tmpprops[propnames[i]][DP_VALUE],
 									tmpprops[propnames[i]][DP_NAMESPACE],
@@ -251,8 +288,11 @@ static object create_response(string href, mapping props, int iscol)
 	object	ret, tmp, *propstat, prop;
 
 #ifdef USE_DAV_ALIASES
-	ret = new_node(aliases["DAV:"] + ":response");
-	tmp = new_node(aliases["DAV:"] + ":href");
+	ret = new_node("response");
+	ret->setNamespace(get_alias("DAV:"));
+
+	tmp = new_node("href");
+	tmp->setNamespace(get_alias("DAV:"));
 #else
 	ret = new_node("response");
 	tmp = new_node("href");
@@ -267,7 +307,8 @@ static object create_response(string href, mapping props, int iscol)
 
 #if 0
 #ifdef USE_DAV_ALIASES
-	tmp = new_node(aliases["DAV:"] + ":status");
+	tmp = new_node("status");
+	tmp->setNamespace(get_alias("DAV:"));
 #else
 	tmp = new_node("status");
 #endif
@@ -320,8 +361,10 @@ static int get_overwrite(object request)
 static object get_request_xml(object request)
 {
 	object root;
+
 	root = new_xmldoc();
 	root->parseXML(request->content_tostring());
+
 	return root;
 }
 

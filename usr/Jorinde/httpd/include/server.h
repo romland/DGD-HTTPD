@@ -4,5 +4,5 @@
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 
-# define HTTPD_VERSION		"0.3.16"
+# define HTTPD_VERSION		"0.3.17"
 

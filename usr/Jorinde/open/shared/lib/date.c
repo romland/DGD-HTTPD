@@ -206,9 +206,10 @@ static int datetime_to_int(string val)
 
 /*
  * Motherfucker. The reason my WebDAV implementation didn't work with
- * Windows WebFolders piece of crap was because it barfed on the 
- * CreationDate property. Apparently it expects it to be of format
- * 2004-03-17T18:14:29.458Z.
+ * Windows WebFolders was because it barfed on the CreationDate 
+ * property. Apparently it expects it to be of format
+ * 2004-03-17T18:14:29.458Z. (which is according to RFC, but other clients
+ * were more forgiving).
  *
  * C-style format, RFC2068 or RFC1123 was barfed upon.
  *

@@ -1,7 +1,7 @@
 /**
  * Description: Implements the WebDAV file-based methods supported by Jorinde.
  *				TODO: Lots and lots of code-cleanup can be done in here,
- *				including plenty of duplicate code.
+ *				this includes fixing plenty of duplicate code.
  * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
@@ -53,6 +53,8 @@ inherit dav		"../lib/dav";
 #ifdef __IGOR__
 inherit "/lib/lwo";
 #endif
+
+#define DEBUG_DATA
 
 private object	infod;
 private mapping	methods, supported;
@@ -171,18 +173,15 @@ private mixed get_prop_value(string prop, string resource, string xmlns,
 		string tmp;
 		switch(prop) {
 		case DAVP_CREATIONDATE :
+			/*
+			 * Windows XP's client demand this datetime format,
+			 * how does it work for other clients?
+			 */
 			v = datetime_tz(0);	/* No support in DGD for creation */
-
-#if 0	/* WinXP */
-			v = "2004-03-17T18:14:29.458Z";
-#endif
 			break;
 
 		case DAVP_DISPLAYNAME :
 			v = finfo[0];
-#if 0	/* WinXP might expect / instead of . ? */
-			v = "/";
-#endif
 			break;
 
 		case DAVP_GETCONTENTLANGUAGE :
@@ -216,8 +215,12 @@ private mixed get_prop_value(string prop, string resource, string xmlns,
 		
 		case DAVP_RESOURCETYPE :
 #ifdef USE_DAV_ALIASES
-			v = ((finfo[1] == -2) ? new_node(get_alias("DAV:") + 
-											":collection") : nil);
+			if(finfo[1] == -2) {
+				v = new_node("collection");
+				v->setNamespace(get_alias("DAV:"));
+			} else {
+				v = nil;
+			}
 #else
 			v = ((finfo[1] == -2) ? new_node("collection") : nil);
 #endif
@@ -232,12 +235,14 @@ private mixed get_prop_value(string prop, string resource, string xmlns,
 			break;
 		
 		default :
+#if 0
 			/*
 			 * Bugs in a propname request (xmlns is nil), error is elsewhere!
 			 * I think this was fixed though. Verify.
 			 */
 			SYSLOG("Unknown property name: " + make_string(prop) + 
 					" (" + make_string(xmlns) + ")\n");
+#endif
 			break;
 		}
 	}
@@ -335,9 +340,9 @@ private object *create_collection(string host, string rel_path,
 	for(i = 0; i < fsize; i++) {
 		int     size, iscol;
 		string	href;
-
+#if 0
 		SYSLOG("Fetching: " + names[i] + "\n");
-
+#endif
 		size  = sizes[i];
 		set_prop_values(props,
 						abs_path,
@@ -375,7 +380,13 @@ private mapping get_dav_props(string path, object node)
 		for(i = 0; i < sizeof(props); i++) {
 			name = lower_case(props[i]->getName());
 			ret[name] = allocate(DP_SIZE);
-			ret[name][DP_NAMESPACE] = props[i]->getAttribute("xmlns");
+			
+			/*ret[name][DP_NAMESPACE] = props[i]->getAttribute("xmlns");*/
+			ret[name][DP_NAMESPACE] = props[i]->getNamespace();
+
+			/* Make namespace known by alias */
+			set_alias( ret[name][DP_NAMESPACE] );
+
 			ret[name][DP_VALUE] = nil;
 			if(supported_property(name)) {
 				ret[name][DP_STATUS] = 200;
@@ -510,18 +521,24 @@ int cmd_propfind(object request, object response)
 	doc = new_xmldoc();
 
 #ifdef USE_DAV_ALIASES
-	root = new_node(get_alias("DAV:") + ":multistatus");
-	set_aliases(root);
+	root = new_node("multistatus");
+	root->setNamespace(get_alias("DAV:"));
 #else
 	root = new_node("multistatus");
 #endif
 
 	doc->insert(root);
 
+#if 1 /* Ending slash of host belongs to HOST */
 	host = "http://" +
 				request->get_header("Host") + 
 				((request->get_port() != 80) ? (":"+request->get_port()) : "")+
 				"/";
+#else /* Ending slash of host belongs to FILENAME */
+	host = "http://" +
+				request->get_header("Host") + 
+				((request->get_port() != 80) ? (":"+request->get_port()) : "");
+#endif
 	rel_path = uri->get_relative_path();
 	abs_path = uri->get_absolute_path();
 
@@ -541,18 +558,17 @@ int cmd_propfind(object request, object response)
 		response->set_status(207);
 	}
 
-/*response->set_header("Content-Type", "application/xml; charset=\"utf-8\"");*/
+#ifdef USE_DAV_ALIASES
+	set_aliases(root);
+#endif
+
 	response->set_header("Content-Type", "text/xml; charset=\"utf-8\"");
 	response->add_content( doc->xml() );
 	response->update_content_length();
 
-#if 0 /* This response works for WinXP */
-	response->clear_content();
-	response->add_content( "<?xml version=\"1.0\"?><a:multistatus xmlns:b=\"urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882/\" xmlns:c=\"xml:\" xmlns:a=\"DAV:\"><a:response><a:href>http://roulette/</a:href><a:propstat><a:status>HTTP/1.1 200 OK</a:status><a:prop><a:getcontentlength b:dt=\"int\">0</a:getcontentlength><a:creationdate b:dt=\"dateTime.tz\">2004-03-17T18:14:29.458Z</a:creationdate><a:displayname>/</a:displayname><a:getetag>\"29114e04bcc41:1520\"</a:getetag><a:getlastmodified b:dt=\"dateTime.rfc1123\">Wed, 17 Mar 2004 18:15:49 GMT</a:getlastmodified><a:resourcetype><a:collection/></a:resourcetype><a:supportedlock/><a:ishidden b:dt=\"boolean\">0</a:ishidden><a:iscollection b:dt=\"boolean\">1</a:iscollection><a:getcontenttype/></a:prop></a:propstat></a:response></a:multistatus>" );
-	response->update_content_length();
-#endif
-
+#ifdef DEBUG_DATA
 	debug_info(request, response);
+#endif
 
 	if(!send(response, TRUE, TRUE)) {
 		SYSLOG("WARNING: davtool->cmd_propfind() failed to send\n");
@@ -624,6 +640,7 @@ int cmd_mkcol(object request, object response)
 	if(!send(response, TRUE, FALSE)) {
 		SYSLOG("WARNING: davtool->cmd_mkcol() failed to send\n");
 	}
+
 	return TRUE;
 }
 

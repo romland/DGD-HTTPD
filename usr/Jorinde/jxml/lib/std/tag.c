@@ -92,7 +92,7 @@ static void propagateNamespace(object *o)
 	if((ns = getNamespace())) {
 		int i;
 		for(i = 0; i < sizeof(o); i++) {
-			if(o[i]->getNamespace() == nil && o[i]->getName()) {
+			if(o[i] && o[i]->getNamespace() == nil && o[i]->getName()) {
 				o[i]->setNamespace(ns);
 			}
 		}
