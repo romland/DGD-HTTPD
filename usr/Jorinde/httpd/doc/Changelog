@@ -317,3 +317,19 @@ Version 0.3.16, 15-jan-2005 (rev. 47+)
   Reason for not having this implemented yet is due to security concerns. But
   I intend to fix PUT in the near future -- mainly to get a working DAV
   implementation. (rev. 52)
+
+Version 0.3.17, 21-jan-2005
+- The URI object is now able to html-decode paths etc. (%20 = space etc).
+- Added a test for the above URI patch.
+- Further namespace support in webdav.
+- Added a test for the above XML patch.
+- Renamed the default web-applications.
+- Applications now output which port they were started on.
+- Remove all logging to std-out (err?). All httpd output now goes to
+  log/server (path to log is printed to stdout on startup of the httpd).
+- New macro DGDSYSLOG() to output something to DGD's stdout.
+- The WebDAV server can now work with Litmus, Cadaver, Konqueror, Windows
+  XP's webfolders (probably more, but I've not tested it with more
+  clients). I dare say that what is implemented now works according to
+  RFC.
+
