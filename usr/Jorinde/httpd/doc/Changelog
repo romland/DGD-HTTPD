@@ -1,6 +1,6 @@
 #
 # Description: Changelog (documentation).
-# Version:     $Id: Changelog 286 2004-08-06 15:49:51Z romland $
+# Version:     $Id$
 # License:     (c)2004 Joakim Romland, see Jorinde/doc/License
 #
 
@@ -241,4 +241,17 @@ Version 0.3.13, 06-aug-2004 (rev. 266+)
   all objects via the property_wrap (which is inherited by all wrappers).
 - Errors that are NOT web-errors now work (they are output using SYSLOG() 
   macro for now) (rev 285)
+
+Version 0.3.14, 12-aug-2004 (rev. 285+)
+- htmlerrord.c now hides the last entry in the stack trace
+- Minor changes to authentication.
+- Clarification in the Glue
+- Fixed several bugs in form-handling.
+- Added formatting function for numbers.
+- Added an independent include file which is included from all glues.
+- Just testing some free-text indexing / searching. :)
+- Added Phantasmal's objectd
+- A few lsp examples/tests
+- Moved WORKING_ON to doc
+- Making svn.berlios.de the main repository (restructured repo layout)
 
