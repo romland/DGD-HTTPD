@@ -1,6 +1,7 @@
 
            Currently in the pipeline or things I'm working on
            """"""""""""""""""""""""""""""""""""""""""""""""""
+- Move all documentation to html-format in www/webroot/html/
 - explode/implode in bstr.c, need testing
 - Make SYSLOG() go to a separate log-file, a couple of exceptions:
   startup-message of httpd, error-logging should go to stdout, possibly
