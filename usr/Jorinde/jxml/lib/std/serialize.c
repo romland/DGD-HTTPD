@@ -14,7 +14,8 @@
 inherit "../log";
 
 /*# define INDENT
-*/
+ */
+
 #ifdef INDENT
 #define TABSIZE 4
 /* TODO: We will crash on high indent-levels */
@@ -80,6 +81,7 @@ string xml(mixed args...)
 			tag += TABS[0..(indent*TABSIZE)];
 #endif
 			tag += "<" + getNs(e) + e->getName();
+			/*tag += "<" + e->getName();*/
 			if(e->has_attributes()) {
 				tag += " " + e->attributesToString();
 			}
@@ -138,6 +140,7 @@ string xml(mixed args...)
 				str += TABS[0..(indent*TABSIZE)];
 #endif
 				str += "</" + getNs(e) + e->getName() + ">\n";
+				/*str += "</" + e->getName() + ">\n";*/
 			}
 		}
 	}

@@ -25,6 +25,7 @@ private object	*index;
 private object	*contents;
 private int		_is_root;
 private int		_type;
+private string	*_namespaces;
 
 
 void constructor()
@@ -33,6 +34,7 @@ void constructor()
 	ser::constructor();
 	dom::constructor();
 
+	_namespaces = ({ });
 	_type = XML_ROOT_NODE;
 	setName("ROOT");
 	_is_root = 1;
@@ -131,3 +133,38 @@ object iterator()
 {
 	error("xmlroot does not implement an iterator, it only has one child");
 }
+
+/* 
+ * This is merely for speed, it makes it easier to retrieve all namespaces
+ * that are used by the document. These are set by the parser after the
+ * entire document is parsed. (Eg, these functions are of no use if the
+ * document was 'constructed' using insert in the DOM.
+ */
+void setGlobalNamespaces(string *ns)
+{
+	_namespaces = ns;
+}
+
+string* getGlobalNamespaces()
+{
+	return _namespaces;
+}
+
+/**
+ * Overloaded: real functionality is in serialize.c
+ */
+#if 0
+string xml(mixed args...)
+{
+	int i;
+
+	if(sizeof(_namespaces) > 25) {
+		error("No support for more than 25 namespaces yet");
+	}
+
+	for(i = 0; i < sizeof(_namespaces); i++) {
+	}
+
+	return ::xml(args...);
+}
+#endif

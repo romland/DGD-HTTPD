@@ -20,6 +20,7 @@ inherit "../file";
 /* Keep track of elements' unique identities. This will become ROOT index. */
 private int    element_count;
 private object *element_index;
+private mapping realnames;
 
 private mixed process(object fragment);
 
@@ -194,7 +195,10 @@ private mapping get_attributes(string str)
 			look_for = "\"";
 		}
 
-		/* ignore escaped quotes within attribute */
+		/*
+		 * Ignore escaped quotes within attribute. 
+		 * This is not according to RFC, I think :P
+		 */
 		tmp = idstart;
 		while( (nextid = index_of((tmp+1), str, look_for) ) && nextid != -1 
 				&& str[nextid-1] == '\\') {
@@ -206,6 +210,24 @@ private mapping get_attributes(string str)
 		val = replace(val, "\\", "");
 		
 		name = strip_whitechars( str[0..equal_sign-1] );
+
+		/*
+		 * Is there a namespace used in this attribute and not a declaration
+		 * of an alias for a namespace? If yes, remove it, we have no support
+		 * yet.
+		 */
+		if((tmp = index_of(0, name, ":")) != -1 && !sscanf(name,"xmlns:%*s")) {
+			/*
+			 * TODO: Attributes should really have support for namespaces
+			 * as well as the tags. 
+			 *
+			 * But, for now, we just disregard them. This at least until
+			 * attributes have their own objects; or we come up with some
+			 * other way to retrieve the namespaces of an attribute.
+			 */
+			name = name[tmp+1..];
+		}
+
 		all[name] = entity(val);
 		str = str[nextid + 1..];
 	}
@@ -216,13 +238,64 @@ private mapping get_attributes(string str)
 
 
 /**
+ * TODO: This parser will act bad if the following occurs:
+ *
+ *	<a:foo xmls:a="jorinde.datatypes" xmlns:b="jorinde.actions">
+ *		<b:bar xmlns:a="jorinde.somethingelse">
+ *			<a:blib/>
+ *		</b:bar>
+ *	</a:foo>
+ *	
+ *	The alias for a will be 'jorinde.somethingelse' when it wants to close
+ *	the <a:foo> tag. This could be solved by always passing local aliases
+ *	to the parsing function. But I am lazy right now.
+ *
+ *  Note: There is also no support for getting the namespace of a single
+ *  attribute. We need to create an attribute object for this to work, and
+ *  eh. Not just now.
+ */
+private void setRealName(string alias, string name)
+{
+	realnames[alias] = name;
+}
+
+
+private void setRealNames(mapping map)
+{
+	string *keys, alias;
+	int i;
+
+	keys = map_indices(map);
+	for(; i < sizeof(keys); i++) {
+		if(sscanf(keys[i], "xmlns:%s", alias) == 1) {
+			/*
+			 * Yes, this is -bad form-, we add the alias even it might 
+			 * already be set. Set comment at setRealName().
+			 */
+			setRealName(alias, map[keys[i]]);
+		}
+	}
+}
+
+
+private string getRealName(string alias)
+{
+	string rname;
+	
+	rname = realnames[alias];
+
+	return (rname ? rname : alias);
+}
+
+
+/**
  * ...
  */
 private object tag_element(object fragment)
 {
 	/* init temporary variables */
 	int close, empty, nextspace, current;
-	string starttag, attribs, name, namespace;
+	string starttag, attribs, name, namespacealias;
 	string fragmentstr;
 	object contents;
 
@@ -232,6 +305,7 @@ private object tag_element(object fragment)
 		WARN("parser.tag_element(): could not find: '>' in "
 			 + fragmentstr[0..]);
 	}
+
 	empty = (fragmentstr[close-1..close-1] == "/");
 	if(empty) {
 		close--;
@@ -254,30 +328,44 @@ private object tag_element(object fragment)
 	current = fragment->getFragglesSize();
 	fragment->setFraggle(current, create_element());
 
-	/*
-	 * XML namespace implementation.
-	 * Side-effect, if name is used in if(!empty) { ... } below, it will
-	 * have stripped all white space (this is new; and it might have been
-	 * a bug prior to today).
-	 * //JR, 17jan2005
-	 */
-	name = strip_whitechars(name);
-	if(sscanf(name, "%s:%s", namespace, name) == 2) {
+	namespacealias = strip_whitechars(name);/* This is namespace -and- name */
+	if(sscanf(namespacealias, "%s:%s", namespacealias, name) == 2) {
+		string namespace;
+		namespace = getRealName(namespacealias);
 		fragment->getFraggleByIndex(current)->setNamespace(namespace);
+	} else {
+		name = namespacealias;
+		namespacealias = nil;
 	}
 
 	fragment->getFraggleByIndex(current)->setName(name);
 
 	if(strlen(attribs) > 0) {
-		fragment->getFraggleByIndex(current)
-				->setAttributes( get_attributes(attribs) );
+		mapping avps;
+
+		avps = get_attributes(attribs);
+
+		/*
+		 * The following function call will grab all 'xmlns' aliases that
+		 * are created and store them in the alias-translation mapping.
+		 * I guess this could be optimized to actually parse the 'xmlns'
+		 * at the same time as we parse the attributes. 
+		 */
+		setRealNames(avps);
+
+		fragment->getFraggleByIndex(current)->setAttributes( avps );
 	}
 
 	if(!empty) {
 		/* get contents of tag, parse these (recursive) */
 		contents = create_fragment();
 		contents->setString(fragmentstr[close+1..]);
-		contents->setEnd(name);
+		/*contents->setEnd(name);*/
+		if(namespacealias) {
+			contents->setEnd(namespacealias + ":" + name);
+		} else {
+			contents->setEnd(name);
+		}
 		contents = process(contents);
 		fragment->getFraggleByIndex(current)
 				->setContents( contents->getFraggles() );
@@ -285,8 +373,7 @@ private object tag_element(object fragment)
 		/* Note that fragmentstr SHOULD change here, but doesn't (because it
 		 * isn't used more in this function. Just for future reference.
 		 */
-	}
-	else {
+	} else {
 		/* we have nested tags */
 		fragment->setString( fragmentstr[close+2..] );
 	}
@@ -471,8 +558,11 @@ static int parse(string src)
 		return 0;
 		/*error("XML source is nil");*/
 	}
-	
+
 	INFO("xml->parse()...");
+
+	realnames = ([ ]);
+	
 	src = strip_crlf(src);
 	src = remove_prolog(src);
 	
@@ -485,9 +575,10 @@ static int parse(string src)
 
 	fragment = process(fragment);
 
-	/* Pass the index of the DOM-tree 'up' to parent class */
+	/* Pass the index of the DOM-tree to super */
 	this_object()->setContents( fragment->getFraggles() );
 	this_object()->setIndex( element_index );
+	this_object()->setGlobalNamespaces(map_values(realnames));
 
 	/* We don't need the information gathered by this class any more */
 	reset_vars();
