@@ -98,8 +98,8 @@ static int dt_to_int(mixed *dt)
 	
 	intdt = NewDT();
 	intdt[DT_YEAR]	 = (int)dt[DT_YEAR];
-	intdt[DT_DATE]	 = ((int)dt[DT_DATE]) - 1;
-	intdt[DT_MONTH]	= (int)index_of_arr(dt[DT_MONTH], SHORTMONTHS);
+	intdt[DT_DATE]	 = ((int)trim_left(dt[DT_DATE])) - 1;
+	intdt[DT_MONTH]	 = (int)index_of_arr(dt[DT_MONTH], SHORTMONTHS);
 	intdt[DT_HOUR]	 = ((int)dt[DT_HOUR]) - 1;
 	intdt[DT_MINUTE] = (int)dt[DT_MINUTE];
 	intdt[DT_SECOND] = (int)dt[DT_SECOND];

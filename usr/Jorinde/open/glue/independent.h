@@ -16,6 +16,7 @@
                                                                                 
 /*
  * Define this if you want to test the indexing crap :)
- * /
+ */
+#if 0
 # define __TEST_INDEXD__
-*/
+#endif
