@@ -45,7 +45,8 @@ static void create(varargs int clone)
 	if(server->is_started()) {
 		SYSLOG(server->get_server_string() + " started.\n");
 	} else {
-		SYSLOG("Jorinde httpd did not start, see preceeding messages.\n");
+		SYSLOG("WARNING: " + server->get_server_string() + 
+			   " did not start, see preceeding messages.\n");
 	}
 }
 
