@@ -111,6 +111,31 @@ string to_href(varargs string hrefhost)
 }
 
 
+/* TODO: This function should probably be in a public lib somewhere */
+private string urldecode(string str)
+{
+	string pre, post;
+	int val, bit0t3, bit5t8;
+
+	if(!str || !strlen(str))
+		return str;
+#if 0
+	SYSLOG("urldecode() org: '" + str + "'\n");
+#endif
+	str = replace(str, "+", " ");
+	while( sscanf(str, "%s%%%c%c%s", pre, bit0t3, bit5t8, post) == 4 ||
+		   sscanf(str, "%s%%%c%c", pre, bit0t3, bit5t8) == 3) {
+		val = hex_to_int(chr(bit0t3)+chr(bit5t8));
+		if(val > 255) continue;
+		str = pre + chr(val) + (post ? post : "");
+	}
+#if 0
+	SYSLOG("urldecode() new: '" + str + "'\n");
+#endif
+	return str;
+}
+
+
 /* Public setters */
 
 int set(string uri, string webroot)
@@ -122,6 +147,8 @@ int set(string uri, string webroot)
 		error("already initialized");
 	}
 	
+	uri = urldecode(uri);
+
 	uri_string = uri;
 	query_string = "";
 	scheme = "";
@@ -168,11 +195,13 @@ int set(string uri, string webroot)
 		path = "/";
 	}
 
+#if 0
 	/* Quick hack to support encoded space (%20), need more support
 	 * for the rest of allowed escaped characters.
 	 */
 	path = replace(path, "%20", " ");
-
+#endif
+	
 	path = replace(path, "*", "");
 	if(path && path[strlen(path)-1] == '/') {
 		filename = "";

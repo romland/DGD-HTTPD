@@ -9,6 +9,7 @@ static void create()
 	test::create("uri");
 	add_test("testURI");
 	add_test("testURI2");
+	add_test("testURI3");
 }
 
 
@@ -61,3 +62,14 @@ void testURI2()
 	assert_equals( "sect",				uri->get_fragment()			);
 }
 
+void testURI3()
+{
+	Uri uri;
+
+	uri = NEW();
+	uri->set("/a%20test%20dir%20with%20a%20plus%20at%20the%20end%2B/" +
+			"request.html?test=%20%2bx+y", "/usr/www/webroot/");
+	assert_equals("a test dir with a plus at the end+/", uri->get_relative_path());
+	assert_equals("request.html", uri->get_filename());
+	assert_equals("test= +x y", uri->get_query_string());
+}

@@ -164,7 +164,7 @@ static void create(varargs int clone)
 		applications[hostname][HTAPP_PORT] = ports[i];
 
 		/* Initialize application */
-		app->initialize(appconfig);
+		app->initialize(appconfig, applications[hostname][HTAPP_PORT]);
 		app->set_port(ports[i]);
 
 		if(elt->getAttribute("default") == "yes") {

@@ -36,7 +36,7 @@ static void create(varargs int clone)
 }
 
 
-int initialize(object conf)
+int initialize(object conf, string port)
 {
 	int i;
 	string media_handler, *tmp;
@@ -123,7 +123,7 @@ int initialize(object conf)
 		SYSLOG("AppConfig warning: No <accesslogger>\n");
 	}
 
-	LOG("Application " + conf->XPATH("name") + " started");
+	LOG("Application " + conf->XPATH("name") + " on port "+port+" started");
 	
 	return TRUE;
 }

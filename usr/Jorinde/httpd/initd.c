@@ -44,9 +44,10 @@ static void create(varargs int clone)
 	/* Done initializing */
 	server = find_object(HTTP_SERVER);		/* ... keep reference to this */
 	if(server->is_started()) {
-		SYSLOG(server->get_server_string() + " started.\n");
+		DGDSYSLOG(server->get_server_string() + " started.\n"); 
+		DGDSYSLOG("Log: " + (SERVER_LOG)[1..] + "\n");
 	} else {
-		SYSLOG("WARNING: " + server->get_server_string() + 
+		DGDSYSLOG("WARNING: " + server->get_server_string() + 
 			   " did not start, see preceeding messages.\n");
 	}
 }

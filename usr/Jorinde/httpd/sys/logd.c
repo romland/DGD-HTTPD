@@ -22,6 +22,12 @@ static void create()
 }
 
 
+string query_serverlog()
+{
+	return SERVER_LOG;
+}
+
+
 int xml_parameter(string key, mixed value)
 {
 	if(object_name(previous_object()) != HTTP_SERVER) {
@@ -36,7 +42,7 @@ int xml_parameter(string key, mixed value)
 
 
 /* TODO: SECURITY! */
-void syslog(mixed msg)
+void dgdsyslog(mixed msg)
 {
 	switch(typeof(msg)) {
 	case T_OBJECT :
@@ -60,7 +66,11 @@ void syslog(mixed msg)
 void log(mixed msg)
 {
 	if(!write_file(SERVER_LOG, ctime(time())[4 .. 18] + " " + msg + "\n")) {
-		syslog("error: could not log: " + msg + "\n");
+		dgdsyslog("error: could not log: " + msg + "\n");
 	}
 }
 
+void syslog(mixed msg)
+{
+	log(msg);
+}

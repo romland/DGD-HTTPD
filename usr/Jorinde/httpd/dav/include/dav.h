@@ -8,14 +8,6 @@
 # undef SYSLOG
 # define SYSLOG(x)	(HTTP_LOGD)->syslog(x)
 
-#if 0
-/* TODO: Hardcoded path -- we don't want to depend on package like this */
-#ifndef SYSLOG
-# define SYSLOG(x)	(HTTP_LOGD)->syslog(x)
-/*# define SYSLOG(x)  ("/usr/Jorinde/sys/logd")->syslog(x)*/
-#endif
-#endif
-
 /* My version */
 # define DAV_VERSION				"0.1.0"
 

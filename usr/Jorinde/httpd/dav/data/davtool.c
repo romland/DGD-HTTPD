@@ -593,7 +593,7 @@ int cmd_mkcol(object request, object response)
 		string abs_path, parent_path, mkdir, *tmp;
 
 		status = 201;
-		abs_path = request->get_absolute_path();
+		abs_path = request->get_uri()->get_absolute_filename();
 		file = ::get_dir(abs_path);
 #if 0
 		SYSLOG("mkcol: " + abs_path + "\n");
@@ -605,7 +605,9 @@ int cmd_mkcol(object request, object response)
 
 		tmp = explode(abs_path, "/");
 		i = sizeof(tmp);
+		/* Get last component of the path */
 		while(i >= 1 && tmp[--i] == "") { /* ... */ }
+
 		parent_path = "/" + implode(tmp[0..i-1], "/");
 		mkdir = tmp[i];
 		file = ::get_dir(parent_path + "/");
@@ -615,11 +617,7 @@ int cmd_mkcol(object request, object response)
 				"parent_path: " + parent_path + "\n" +
 				"      mkdir: " + mkdir + "\n");
 #endif
-		if(parent_path == "" || mkdir == "" || !sizeof(file[0])) {
-			/* parent path doesn't exist; or some other weird thing */
-			status = 409;
-		}
-
+	
 		if(request->get_content_length()) {
 			/* we don't know what body contains or means */
 			status = 415;
@@ -630,7 +628,8 @@ int cmd_mkcol(object request, object response)
 				SYSLOG("created dir\n");
 			} else {
 				SYSLOG("failed to create dir\n");
-				status = 507; /* which really means insufficient storage */
+				/*status = 507; / * which really means insufficient storage */
+				status = 409; 
 			}
 		}
 	}
@@ -705,21 +704,22 @@ int cmd_delete(object request, object response)
 		status = 401;
 	} else {
 		int iscol, count;
-		abs_path = request->get_absolute_filename();
+		abs_path = request->get_uri()->get_absolute_filename();
 		status = 200;
 
 		file = ::get_dir(abs_path);
 		count = sizeof(file[0]);
-		c = abs_path[strlen(abs_path)-1];
+		c = abs_path[strlen(abs_path)-1];	/* last char */
 		if(count) {
 			iscol = (file[1][0] < 0) ? TRUE : FALSE;
 		}
 
-		if(count != 1 || (iscol && c != '/') || (!iscol && c == '/')) {
+		/*if(count != 1 || (iscol && c != '/') || (!iscol && c == '/')) {*/
+		if(count != 1) {
 			/* - Non-existing file/directory or more than one match.
 			 * - File/collection does/doesn't (respectively) end with slash.
 			 */
-			status = 405;
+			status = 404;
 		}
 
 		if(status == 200) {
@@ -785,7 +785,7 @@ int cmd_copy(object request, object response)
 	}
 
 	status = 204;
-	src = request->get_absolute_filename();
+	src = request->get_uri()->get_absolute_filename();
 	overwrite = get_overwrite(request);
 
 	if(!(dst = get_absolute_destination(request))) {
@@ -880,7 +880,7 @@ int cmd_move(object request, object response)
 
 	status = 204;
 	overwrite = get_overwrite(request);
-	src = request->get_absolute_filename();
+	src = request->get_uri()->get_absolute_filename();
 	if(!(dst = get_absolute_destination(request))) {
 		status = 400;
 	} else if(has_access_file(src, WRITE_ACCESS) == FALSE ||
@@ -972,7 +972,7 @@ int cmd_proppatch(object request, object response)
 		int iscol;
 
 		status = 204;
-		resource = request->get_absolute_filename();
+		resource = request->get_uri()->get_absolute_filename();
 		iscol    = is_dir(resource);
 		resource = ending_slash(resource, iscol);
 		reqxml   = get_request_xml(request);
