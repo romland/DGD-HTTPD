@@ -4,7 +4,6 @@
  * License:     (c)2004 Joakim Romland, see doc/License
  */
                                                                                 
-# include "../open/jorinde.h"
 # include "../include/index.h"
                                                                                 
 inherit ptr INDEX_LIB_PTR;

@@ -16,6 +16,8 @@
  *		The positions are referred to as index / indices which is
  *		not to be confused with the index for searching.
  */
+# include "../include/index.h"
+
 private mapping pointers;
 
 /* TODO: Secure the functions in this object! */

@@ -153,6 +153,9 @@
 		<media-type>
 			<file-suffix>txt</file-suffix>
 			<content-type>text/plain</content-type>
+			<handler>
+				<program>/usr/Jorinde/plugins/mh/txt2html</program>
+			</handler>
 		</media-type>
 
 		<media-type>

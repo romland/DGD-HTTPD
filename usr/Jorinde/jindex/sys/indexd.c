@@ -3,7 +3,6 @@
  * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
-# include "../open/jorinde.h"
 # include "../include/index.h"
 
 # include <limits.h>
