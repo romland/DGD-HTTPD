@@ -12,9 +12,13 @@
 # include "../include/www.h"
 # include "../include/access.h"
 
-#define VERBOSE_IO_DEBUG
-/*#define LIMITED_IO_DEBUG*/
-
+#define DEBUG_TRAFFIC
+/*
+#define DEBUG_TRAFFIC_VERBOSE
+#define DEBUG_DATA
+#define DEBUG_INFO
+#define DEBUG_WARNINGS
+*/
 
 inherit user	LIB_HTTP_BUFF_USER;
 inherit str		LIB_HTTP_STRING;
@@ -25,7 +29,9 @@ private	int		keep_alive;
 private object  app, accessd, authend;
 private	string	errors;
 
+#ifdef DEBUG_COST
 private int		ticks_reqgen;			/* Cost for last request */
+#endif
 
 static	object	create_request(string str);
 
@@ -236,13 +242,13 @@ nomask int send_headers(object response)
 	data += response->headers_tostring();
 	data += response->cookies_tostring();
 
-#ifdef VERBOSE_IO_DEBUG
+#ifdef DEBUG_TRAFFIC_VERBOSE
 	SYSLOG("-------- RESPONSE HEADERS --------\n");
 	SYSLOG("\n" + data);
 	SYSLOG("----------------------------------\n");
 #endif
 
-#ifdef LIMITED_IO_DEBUG
+#ifdef DEBUG_TRAFFIC
 	SYSLOG("res: " +
 				"[" + ip_number() + "] " + 
 				app->http_status_string(response->get_status()) + ", " +
@@ -252,7 +258,9 @@ nomask int send_headers(object response)
 #endif
 
 	if(!send_data(data + CRLF)) {
+#ifdef DEBUG_WARNINGS
 		SYSLOG("Could not send headers. Destructing user object.");
+#endif
 		disconnect();
 		return FALSE;
 	}
@@ -274,7 +282,7 @@ nomask int send_content(object response, string data)
 		response->update_content_length();
 		errors = nil;
 	}
-#if 0
+#ifdef DEBUG_DATA
 	SYSLOG("DATA: ---|\n" + data + "\n----|\n");
 #endif
 	return send_data(data);
@@ -303,9 +311,11 @@ static int receive_request(string request_string)
 	object request, response;
 	string hostname;
 
+#ifdef DEBUG_COST
 	rlimits(50; 16000000) { ticks_reqgen = AssessCost();
+#endif
 
-#ifdef VERBOSE_IO_DEBUG
+#ifdef DEBUG_TRAFFIC_VERBOSE
 	SYSLOG("--------------- REQUEST ---------------\n");
 	SYSLOG("From: " + ip_name() + " (" + ip_number() + ")\n" + request_string);
 	SYSLOG("------------ END OF REQUEST -----------\n");
@@ -335,11 +345,13 @@ static int receive_request(string request_string)
 	/* create a request object */
 	request = create_request(request_string);
 	if(request == nil) {
+#ifdef DEBUG_WARNINGS
 		SYSLOG("request is nil (but stored in pending), incoming data\n");
+#endif
 		return MODE_NOCHANGE;
 	}
 
-#ifdef LIMITED_IO_DEBUG
+#ifdef DEBUG_TRAFFIC
 	SYSLOG("req: " + 
 				"[" + ip_number() + "] " + 
 				app->get_hostname() + ":" + 
@@ -357,21 +369,29 @@ static int receive_request(string request_string)
 	app->http_log(request, response);
 	if(response == nil) {
 		/* we got a content body with request, dealing with that */
+#ifdef DEBUG_INFO
 		SYSLOG("user->receive_request(), response is nil\n");
+#endif
 	} else {
 		if(call_method(request, response) == FALSE) {
+#ifdef DEBUG_WARNINGS
 			SYSLOG("call_method failed; disconnecting\n");
+#endif
 			ret = MODE_DISCONNECT;
 		}
 	}
 
 	if(!keep_alive && response->contents_buffered() == FALSE) {
+#ifdef DEBUG_WARNINGS
 		SYSLOG("receive_request(): no keep-alive nor buffered data. Bye.\n");
+#endif
 		ret = MODE_DISCONNECT;
 	}
 
+#ifdef DEBUG_COST
 	ticks_reqgen = GetCost(ticks_reqgen); }
 	OutputCost("Request cost", ticks_reqgen);
+#endif
 
 	return ret;
 }
@@ -392,7 +412,9 @@ static object create_request(string str)
 	if(!str||sscanf(str, "%s %s HTTP/%s\r\n%s", cmd, ruri, ver, head) !=4 ) {
 		if(sscanf(str, "%s %s HTTP/%s\n%s", cmd, ruri, ver, head) != 4) {
 			request->set_badrequest(TRUE);
+#ifdef DEBUG_WARNINGS
 			SYSLOG("create_request(): Bad request?\n");
+#endif
 			return request;
 		}
 	}
@@ -433,15 +455,16 @@ static object create_request(string str)
 		keep_alive = FALSE;
 	}
 
-	SYSLOG("connection head: " + (tmp?tmp:"")  + 
-		   " [keep-alive: " + keep_alive + "]\n");
-
 	/* Authenticate user (if any) authenticate() returns user to log in */
 	if(request->get_header("Authorization") && get_name() == HTTP_ANON_USER &&
 				(authstr = authend->authenticate(request)) && strlen(str)) {
+#ifdef DEBUG_INFO
 		SYSLOG("logging in '" + authstr + "'...\n");
+#endif
 		user::login( authstr, 1 );
+#ifdef DEBUG_INFO
 		SYSLOG("logged in name is: " + query_name() + "\n");
+#endif
 		request->set_header("Authorization", "[secret]");
 		request->set_authenticated( get_name() ? get_name() : "" );
 		clone_tools();
@@ -464,20 +487,30 @@ static object create_request(string str)
 			len = 0;
 		}
 
+#ifdef DEBUG_DATA
 		SYSLOG("Claimed tot: " + len + " bytes (got: "+strlen(str)+")\n");
+#endif
 
 		if(sscanf(str, "%*s" + CRLF + CRLF + "%s", content) == 2) {
+#ifdef DEBUG_DATA
 			SYSLOG("adding some content\n");
+#endif
 		} else if(cmd == "POST") {
+#ifdef DEBUG_DATA
 			SYSLOG("expecting content\n");
+#endif
 		} else {
 			/* Headers did not end with 2*CRLF, bad request */
+#ifdef DEBUG_WARNINGS
 			SYSLOG("malformed request\n");
+#endif
 			request->set_badrequest(TRUE);
 			return request;
 		}
 
+#ifdef DEBUG_DATA
 		SYSLOG("expecting more content\n");
+#endif
 		ob = set_incoming();
 		ob->set_request(request);
 
@@ -485,7 +518,9 @@ static object create_request(string str)
 			request->add_content(content);
 			receive_pending( request->content_tostring() );
 		} else {
+#ifdef DEBUG_DATA
 			SYSLOG("no content with request\n");
+#endif
 		}
 
 		return nil;

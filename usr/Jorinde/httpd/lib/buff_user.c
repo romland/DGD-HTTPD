@@ -85,8 +85,6 @@ static void set_ttl(int seconds)
 #else
 	ttl_handle = call_out("disconnect", seconds);
 #endif
-	SYSLOG("set_ttl(): TTL is " + seconds + 
-			" sec [handle: " + ttl_handle + "]\n");
 }
 
 
