@@ -115,12 +115,8 @@ static Response create_response(Request request)
 							datetime(time(), app->get_timezone())
 						);
 	response->set_header("Content-Length", 0);
-#ifndef __LAST_MODIFIED_FIX__
-	response->set_header("Last-Modified", ctime(time()));
-#else
 	response->set_header("Last-Modified", 
 			datetime(time(), app->get_timezone()));
-#endif
 	response->set_request(request);
 
 	if(app->get_session_tracking()) {

@@ -261,13 +261,8 @@ int cmd_get(Request request, Response response)
 		return TRUE;
 	}
 	response->set_header("Content-Length", list[1][0]);
-#ifndef __LAST_MODIFIED_FIX__
-	response->set_header("Last-Modified", ctime(list[2][0]));
-#else
 	response->set_header("Last-Modified", 
 			datetime(list[2][0], app->get_timezone()));
-#endif
-
 #endif
 
 #ifdef USE_ETAGS /* TODO: DISABLED ON 04-AUG-2004 DUE TO BUGS, WILL FIX! */
