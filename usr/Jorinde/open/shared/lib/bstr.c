@@ -23,10 +23,10 @@
  *	subbstr()		same as substr, but returns a bstr instead.
  *	endswith()		does bstr end with str
  *	startswith()	does bstr start with str
+ *	explode()		need testing (!)
+ *	implode()		need testing (!)
  * TODO:
  *	replace()		replace str in bstr
- *	explode()
- *	implode()
  */
 
 # include <kernel/kernel.h>
@@ -607,6 +607,60 @@ int replace(string findwhat, string replacewith)
 	}
 	return TRUE;
 }
+
+# if 0
+object *explode(string str)
+{
+	object *ret;
+	int i;
+
+	ret = ({ });
+
+	if(length() <= MAX_STRING_SIZE) {
+		string *arr;
+
+		arr = explode(to_string(), str);
+		ret = allocate(sizeof(str));
+		for(i = 0; i < sizeof(arr); i++) {
+			ret[i] = new_object(BSTR);
+			ret[i]->insert( arr[i] );
+		}
+	} else {
+		int pos, found;
+		object ob;
+	
+		pos = 0;
+		while((found = find(str, pos)) != -1) {
+			
+			ob = new_object(BSTR);
+			ob->insert( subbstr(pos, found-pos) );
+			ret += ({ ob });
+
+			pos = found+strlen(str);
+		}
+
+		ob = new_object(BSTR);
+		ob->insert( subbstr(pos) );
+
+		ret += ({ ob });
+	}
+
+	return ret;
+}
+
+
+int implode(object *arr, string str)
+{
+	int i;
+
+	for(i = 0; i < sizeof(arr); i++) {
+		insert(arr[i]);
+		insert(str);
+	}
+
+	return TRUE;
+}
+# endif
 
 
 string to_string()

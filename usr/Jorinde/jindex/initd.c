@@ -13,7 +13,7 @@ static void create(varargs int clone)
 	COMPILE( INDEXD );
 
 #if 1
-	(JORINDE_INDEX+"sys/indexd")->create_index("/doc/");
+	(JORINDE_INDEX+"sys/indexd")->create_index("/doc/kernel/efun/");
 #if 0
 	(JORINDE_INDEX+"sys/indexd")->visualize_index();
 #endif

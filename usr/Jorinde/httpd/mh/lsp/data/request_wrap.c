@@ -50,8 +50,17 @@ mapping  items()			{ return req_uri->get_query_items();		}
  * TODO: questionable wrapper-names, return values, but I just want to
  * test it now. NOTE: THIS WILL CHANGE!
  */
-object	 form(string a)		{ return request->get_post_item(a);			}
-mapping  form_items()		{ return request->get_formdata();			}
+object	form(string a)		{ return request->get_post_item(a);			}
+mapping form_items()		{ return request->get_formdata();			}
+
+string form_string(string a)
+{
+	object ob;
+	if((ob = form(a))) {
+		return ob->content_tostring();
+	}
+	return "";
+}
 
 string   query()			{ return request->get_query_string();		}
 string   path()				{ return req_uri->get_relative_path();		}

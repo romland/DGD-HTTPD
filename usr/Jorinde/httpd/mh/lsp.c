@@ -17,6 +17,7 @@ inherit lib LIB_HTTP_MEDIAHANDLER;
 static object compiler;
 static object htmlerrd;
 
+
 void create(varargs int clone)
 {
 	if(!find_object(LSP_ERRORD))		compile_object(LSP_ERRORD);
@@ -32,6 +33,7 @@ void create(varargs int clone)
 	
 	lib::create();
 }
+
 
 int xml_parameter(string key, mixed value)
 {
@@ -50,16 +52,19 @@ object get_errord()
 	return htmlerrd;
 }
 
+
 object get_compiler()
 {
 	return compiler;
 }
+
 
 int get_supports(string filesuffix)
 {
 	::get_supports(filesuffix);
 	return (filesuffix == "lsp") ? TRUE : FALSE;
 }
+
 
 int get_need_content(object request, object response)
 {
@@ -68,11 +73,16 @@ int get_need_content(object request, object response)
 	return FALSE;
 }
 
+
 static object new_wrapper(string program)
 {
 	return new_object( program );
 }
 
+
+/*
+ * This is the entry point for handling this mediatype.
+ */
 int handle(object request, object response)
 {
 	int i;

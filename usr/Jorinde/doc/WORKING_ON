@@ -1,6 +1,10 @@
 
            Currently in the pipeline or things I'm working on
            """"""""""""""""""""""""""""""""""""""""""""""""""
+- explode/implode in bstr.c, need testing
+- Make SYSLOG() go to a separate log-file, a couple of exceptions:
+  startup-message of httpd, error-logging should go to stdout, possibly
+  also a FEW other ones.
 - Dependencies on objectd (__HAVE_OBJECTD__) causes problems for people 
   without objectd, fix!
 - The conditional GET doesn't work -- it will NEVER return a new copy if

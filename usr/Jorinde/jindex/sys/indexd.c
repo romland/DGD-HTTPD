@@ -15,7 +15,11 @@ inherit LIB_HTTP_STRING;
 # define SMALLEST_WORD			3
 # define DELAYED_INDEXING		FALSE
 
-#define MAX_CHUNK_SIZE			32768
+#if DELAUED_INDEXING
+# define MAX_CHUNK_SIZE			1024 /* 4096 8192 16384 32768*/
+#else
+# define MAX_CHUNK_SIZE			32678
+#endif
 
 mapping index;
 
@@ -147,8 +151,8 @@ static string get_valid_word(string word)
 	int len, j, ch, breaks, discarded;
 	string ret;
 
-	/* 2 character or less we don't care about, same with > 20 */
-	if((len = strlen(word)) < SMALLEST_WORD || len > 20) {
+	/* 2 character or less we don't care about, same with > 30 */
+	if((len = strlen(word)) < SMALLEST_WORD || len > 30) {
 		badsizedwords++;
 		return nil;
 	}
@@ -188,36 +192,62 @@ static string get_valid_word(string word)
 
 /*
  * characters considered part of a word: _ [a-z] [0-9]
+ *
+ * Offset is just a value added to the position where the word was found
+ * in the file; useful if you index files in chunks.
  */
-static mapping index_string(string content)
+static mapping index_string(string content, int offset)
 {
 	int ticks;
 
 	mapping ret;
-	int i, wc, ch, cost;
+	int i, wc, ch, cost, bytecount;
 	string *words, word;
 
-	bytecount += strlen(content);
+	bytecount = offset;
 
+#if 1 /* EXPLODE/IMPLODE TO SEARCH/REPLACE */
 	ticks = AssessCost();
 	/* This loop is probably quite expensive! What are the alternatives? */
 	for(i = 0; i < sizeof(SPACIFY); i++) {
 		/* replace funny characters with space */
 		content = implode(explode(content, SPACIFY[i]), " ");
 	}
-	ticks = GetCost(ticks);
-	OutputCost("spacify", ticks);
-
+	
 	words = explode(content, " ");
+	
+	ticks = GetCost(ticks);
+	OutputCost("explode-spacify", ticks);
+/*
 	words -= ({ "" });
+*/
+#endif
+	
+#if 0 /* PARSE_STRING TO SEARCH/REPLACE */
+	/*
+	 * If we use this method we cannot [easily] determine at which
+	 * offset words are in a file.
+	 */
+	ticks = AssessCost();
+	words = parse_string( 
+	"whitespace = /[ .,!`~!@#$%\\^&*()\\-_=+\\\\|[\\]{}:;\"'<,>./?\b\r\n\t]/"+
+	"word       = /([a-z]|[A-Z]|[0-9])+/ " +
+	"sentence   : sentence word " +
+	"sentence   : word "
+		,content );
+
+	ticks = GetCost(ticks);
+	OutputCost("parse-spacify", ticks);
+#endif
 
 	ret = ([ ]);
 	
 	ticks = AssessCost();
 	for(i = 0; i < sizeof(words); i++) {
 		word = words[i];
+		bytecount += (strlen(word)+1); /* strlen will add extra byte for " " */
 
-		if( !(word = get_valid_word(word)) ) {
+		if( !strlen(word) || !(word = get_valid_word(word)) ) {
 			continue;
 		}
 
@@ -232,11 +262,11 @@ static mapping index_string(string content)
 
 		/* valid word counter in this file (also works as position) */
 		wc++;
-		
+
 		if(!ret[word]) {
-			ret[word] = ({ wc });
+			ret[word] = ({ bytecount-(strlen(word)+1) });
 		} else {
-			ret[word] += ({ wc });
+			ret[word] += ({ bytecount-(strlen(word)+1) });
 		}
 		wordlength += strlen(word);
 	}
@@ -379,6 +409,8 @@ static void index_files()
 	/* Index file(s) in the filenames array */
 	for(i = 0; i < sz; i++) {
 		int *finfo;
+		int offset, length;
+		string chunk;
 
 		SYSLOG(opt_fns[i] + "\n");
 
@@ -390,58 +422,55 @@ static void index_files()
 			continue;
 		}
 		
-		if(finfo[FINFO_FILESIZE] > MAX_CHUNK_SIZE) {
-			int offset, length;
-			string chunk;
+		offset = finfo[FINFO_READBYTES];
 
-			SYSLOG("------ " + filenames[current_fid] + " (big)\n");
-			offset = finfo[FINFO_READBYTES];
-
-			while(offset < finfo[FINFO_FILESIZE]) {
-				rlimits(50; 8000000) {
-					ticks = AssessCost();
-
-					length = MAX_CHUNK_SIZE;
-					SYSLOG("reading: " + offset + "-" + (offset+length) + 
-							" (of " + finfo[FINFO_FILESIZE] + ")\n");
-					chunk = read_file(opt_fns[current_fid], offset, length);
-					if(strlen(chunk) >= length) {
-						SYSLOG(": '" + chunk[0..10] + "'\n");
-						while(!is_member(chunk[length-1..length-1], SPACIFY)) {
-#if 0
-							/* smile */
-							SYSLOG("loop: '" + (chunk[length..length]) + "' " +
-									(offset+length) + "\n");
+#if DELAYED_INDEXING == FALSE
+		while(offset < finfo[FINFO_FILESIZE]) {
+			rlimits(50; 8000000) {
 #endif
-							length--;
-						}
+				ticks = AssessCost();
+
+				length = MAX_CHUNK_SIZE;
+#if 0
+				SYSLOG("reading: " + offset + "-" + (offset+length) + 
+						" (of " + finfo[FINFO_FILESIZE] + ")\n");
+#endif
+				chunk = read_file(opt_fns[current_fid], offset, length);
+				if(strlen(chunk) >= length) {
+					SYSLOG(": '" + chunk[0..10] + "'\n");
+					while(!is_member(chunk[length-1..length-1], SPACIFY)) {
+#if 0
+						/* smile */
+						SYSLOG("loop: '" + (chunk[length..length]) + "' " +
+								(offset+length) + "\n");
+#endif
+						length--;
 					}
-					offset += length;
-					append_to_index( index_string( chunk ), current_fid );
-
-					ticks = GetCost(ticks);
-					totalcost += ticks;
-					OutputCost("total", ticks);
+					chunk = chunk[0..length-1];
+				} else {
+					length = strlen(chunk);
 				}
-			}
 
-			if( offset >= finfo[FINFO_FILESIZE] ) {
-				finfo[FINFO_READBYTES] = 0;
-				finfo[FINFO_INDEXED] = time();
-				finfo[FINFO_SCHEDULED] = FALSE;
-			} else {
-				finfo[FINFO_READBYTES] = offset;
-			}
+				append_to_index( index_string( chunk, offset ), current_fid );
+				offset += length;
 
-			fileinfo[current_fid] = finfo;
-				
-		} else {
-			append_to_index( 
-					index_string( read_file(opt_fns[current_fid])), current_fid
-			);
+				ticks = GetCost(ticks);
+				totalcost += ticks;
+				OutputCost("total", ticks);
+#if DELAYED_INDEXING == FALSE	
+			}
 		}
-
-		current_fid++;
+#endif
+		if( offset >= finfo[FINFO_FILESIZE] ) {
+			finfo[FINFO_READBYTES] = 0;
+			finfo[FINFO_INDEXED] = time();
+			finfo[FINFO_SCHEDULED] = FALSE;
+			fileinfo[current_fid] = finfo;
+			current_fid++;
+		} else {
+			finfo[FINFO_READBYTES] = offset;
+			fileinfo[current_fid] = finfo;
+		}
 	}
 
 #if DELAYED_INDEXING
@@ -450,7 +479,7 @@ static void index_files()
 		search_optimization();
 		return;
 	} else {
-		call_out("index_files", 1);
+		call_out("index_files", 0.2);
 	}
 #else
 	search_optimization();
@@ -505,9 +534,9 @@ string *get_hits(string q)
 	}
 
 	ret = ({ });
-
+/*
 	rlimits(50; 40000) {
-		ticks = AssessCost();
+		ticks = AssessCost();*/
 		hits = index[ q[0..(LEVEL_LENGTH-1)] ]->get_hits( q[LEVEL_LENGTH..] );
 		ticks = GetCost(ticks);
 		OutputCost("Query cost", ticks);
@@ -520,10 +549,10 @@ string *get_hits(string q)
 		for(i = 0; i < sizeof(hits); i++) {
 			ret += ({ filenames[hits[i]] });
 		}
-		ticks = GetCost(ticks);
+/*		ticks = GetCost(ticks);
 		OutputCost("Fn translate", ticks);
 	}
-
+*/
 	return ret;
 }
 
