@@ -25,6 +25,8 @@ private	int		keep_alive;
 private object  app, accessd, authend;
 private	string	errors;
 
+private int		ticks_reqgen;			/* Cost for last request */
+
 static	object	create_request(string str);
 
 
@@ -296,6 +298,8 @@ static int receive_request(string request_string)
 	object request, response;
 	string hostname;
 
+	rlimits(50; 16000000) { ticks_reqgen = AssessCost();
+
 #ifdef VERBOSE_IO_DEBUG
 	SYSLOG("--------------- REQUEST ---------------\n");
 	SYSLOG("From: " + ip_name() + " (" + ip_number() + ")\n" + request_string);
@@ -351,6 +355,10 @@ static int receive_request(string request_string)
 	if(!keep_alive && response->contents_buffered() == FALSE) {
 		ret = MODE_DISCONNECT;
 	}
+
+	ticks_reqgen = GetCost(ticks_reqgen); }
+	OutputCost("Request cost", ticks_reqgen);
+
 	return ret;
 }
 
