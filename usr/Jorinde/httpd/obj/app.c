@@ -79,8 +79,13 @@ int initialize(object conf)
 
 		node = nodes[i];
 		suffix = node->XPATH("file-suffix");
-		
-		program = get_program(node->xpath("handler")[0]);
+		catch {
+			program = get_program(node->xpath("handler")[0]);
+		} : {
+			SYSLOG("Ignoring plugin for ." + suffix + " files.\n");
+			continue;
+		}
+
 		media_handlers[suffix] = allocate(MT_SIZE);
 		media_handlers[suffix][MT_CONTENTTYPE] = node->XPATH("content-type");
 		media_handlers[suffix][MT_HANDLER] = program;

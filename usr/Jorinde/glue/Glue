@@ -11,7 +11,7 @@ Note: Depending on how long it's been since I updated the documentation:
 In order to glue the Jorinde application suite to your own environment you 
 need to change a few settings and possibly write a middle layer that 
 translate information from your environment to information used by Jorinde. 
-Everything should work fine under a vanilly DGD Kernel Library (eg, no 
+Everything should work fine under a vanilla DGD Kernel Library (eg, no 
 custom auto-object or similar is needed).
 
 Alright, I realize this might look like a lot. Take my word for it, it isn't.

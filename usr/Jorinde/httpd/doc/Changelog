@@ -257,3 +257,7 @@ Version 0.3.14, 12-aug-2004 (rev. 285+)
 
 Version 0.3.15, 27-dec-2004 (?+)
 - Minor updates + fixes for 'new' xml-root object.
+
+Version ??, 28-dec-2004 (?+)
+- Catch errors if a plugin is missing in an application; and continue.
+
