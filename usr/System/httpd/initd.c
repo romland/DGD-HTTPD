@@ -22,6 +22,7 @@ static void create(varargs int clone)
 	/* TODO: We need to be able to configure most of this file */
 	rsrc::add_owner("Jorinde");
 	rsrc::add_owner("www");
+	rsrc::add_owner("wwwuser");
 
 	COMPILE(USR_SYSTEM+"httpd/binaryd");
 	COMPILE(USR_SYSTEM+"httpd/data/tool");
