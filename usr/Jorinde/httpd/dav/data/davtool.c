@@ -265,7 +265,6 @@ private object *create_collection(string host, string rel_path,
 	int		fsize, i, *sizes, *times;
 
 	/* TODO: SECURITY! Need read access to this dir (this fn is recursive!) */
-
 	if((maxdepth - depth) < 0) {
 		return ({ });
 	} else if(maxdepth > 0) {

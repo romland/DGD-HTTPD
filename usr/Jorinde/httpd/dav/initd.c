@@ -7,6 +7,7 @@ static void create(varargs int clone)
 {
 	server = find_object(HTTP_SERVER);
 
+	COMPILE( DAV_HOME + "data/davxmlroot" );
 	COMPILE( DAV_INFOD );
 	COMPILE( DAV_STORAGE );
 }

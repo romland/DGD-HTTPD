@@ -12,3 +12,6 @@
 # define TEST_CASE			LUNIT_HOME + "lib/testcase"
 # define TEST_RUNNER		LUNIT_HOME + "data/runner"
 
+# define TestSuite			object TEST_SUITE
+# define TestCase			object TEST_CASE
+# define TestRunner			object LIB_HTTP_STRING	/* No lib for this yet */

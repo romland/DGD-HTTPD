@@ -111,8 +111,10 @@ object *get_connections()
 int login(string str, varargs mixed pass_on)
 {
 	/* __IGOR__ compat problem, need to check if we have a previos ob */
-	if(previous_program() != LIB_CONN && previous_object()) {
-		SYSLOG("Warning: No previous object, disconnecting.\n");
+	if(previous_program() != LIB_CONN && previous_program() != HTTP_USER && 
+	   previous_object()) {
+		SYSLOG("Warning: Illegal caller [pp: " + previous_program() + "] " +
+			   "[po: "+object_name(previous_object())+"], disconnecting.\n");
 		return MODE_DISCONNECT;
 	}
 

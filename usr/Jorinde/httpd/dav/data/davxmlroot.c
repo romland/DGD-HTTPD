@@ -3,7 +3,12 @@
  * Version:     $Id: root.c 28 2004-10-02 10:15:32Z trickster $
  * License:     (c)2004 Joakim Romland, see doc/License
  */
-inherit root JXML + "/lib/std/root";
+# include "../include/dav.h"
+# include <kernel/kernel.h>
+
+# define CREATOR(o)	(DRIVER->creator(object_name(o)))
+
+inherit root JORINDE_XML + "/lib/std/root";
 
 private string filename;
 
@@ -43,7 +48,7 @@ static string xml_readfile(string file)
  */
 int parseXML(string source)
 {
-	if(creator(previous_object()) != creator(this_object())) {
+	if(CREATOR(previous_object()) != CREATOR(this_object())) {
 		error("illegal call");
 	}
 

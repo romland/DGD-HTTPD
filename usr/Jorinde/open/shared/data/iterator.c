@@ -6,6 +6,7 @@
  */
 # include "../include/shared.h"
 
+inherit LIB_ITERATOROBJ;
 #ifdef __IGOR__
 inherit "/lib/lwo";
 #endif
