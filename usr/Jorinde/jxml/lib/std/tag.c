@@ -144,4 +144,3 @@ void setUid(int a)
 	}
 	_uid = a;
 }
-

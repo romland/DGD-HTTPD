@@ -122,3 +122,7 @@ int loadXML(string filename)
 	return 1;
 }
 
+object iterator()
+{
+	error("xmlroot does not implement an iterator, it only has one child");
+}

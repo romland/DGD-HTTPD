@@ -19,31 +19,27 @@
 mapping datasources;
 
 
-private void
-log2file(string ds, string msg)
+private void log2file(string ds, string msg)
 {
 	/* TODO: log to file */
 }
 
 
-private static int
-load()
+private int load()
 {
 	restore_object(SAVE_FILE);
 	return 1;
 }
 
 
-private static int 
-save()
+private int save()
 {
 	save_object(SAVE_FILE);
 	return 1;
 }
 
 
-private static void
-call_out_handler()
+private void call_out_handler()
 {
 	if(find_call_out( CHECK_FUNCTION ) == -1) {
 		if(map_sizeof(datasources) > 0) {
@@ -62,8 +58,7 @@ call_out_handler()
 /**
  * Initialize diffd.
  */
-void
-create(varargs int clone)
+void create(varargs int clone)
 {
 	if(sscanf(file_name(this_object()), "%s#%d", s1, s2) == 2) {
 		/* We don't want to be a clone */
@@ -87,8 +82,7 @@ create(varargs int clone)
 #define VDS_ERR_NO_XML         -2
 #define VDS_ERR_NO_SO          -3
 #define VDS_ERR_NO_OB_VDS      -4
-private static int
-verify_datasource(string ds, object ob)
+private int verify_datasource(string ds, object ob)
 {
 	if(!ob || catch( (ob->__com_pile__me__()) ) != nil) {
 		return VDS_ERR_NO_SO;
@@ -113,8 +107,7 @@ verify_datasource(string ds, object ob)
 }
 
 
-private static void
-verify_datasources()
+private void verify_datasources()
 {
 	string *indices;
 	int i, res;
@@ -140,8 +133,7 @@ verify_datasources()
 }
 
 
-private static void
-datasource_changed(string ds)
+private void datasource_changed(string ds)
 {
 	if(catch( ob->ds_update(ds) ) == nil) {
 		datasources[ds][DS_FAILED_UPDATES] = 0;
@@ -151,8 +143,7 @@ datasource_changed(string ds)
 }
 
 
-private static void
-check_datasources()
+private void check_datasources()
 {
 	string *dses;
 	int i, ts;
@@ -175,8 +166,7 @@ check_datasources()
  * @arguments:
  * @returns:
  */
-public int
-add_datasource(string filename)
+int add_datasource(string filename)
 {
 	int ret;
 	ret = 0;
@@ -187,8 +177,7 @@ add_datasource(string filename)
 }
 
 
-public int
-remove_datasource(string filename)
+int remove_datasource(string filename)
 {
 	int ret;
 	ret = 0

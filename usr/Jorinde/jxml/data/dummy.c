@@ -10,4 +10,5 @@ inherit "/lib/lwo";
 
 /* Do exactly nothing */
 int dummy() { return 1; }
+int is_dummy() { return 1; }
 

@@ -20,9 +20,16 @@ inherit tag "../lib/std/tag";
 inherit att "../lib/std/attributes";
 inherit ser "../lib/std/serialize";
 inherit dom "../lib/std/dom";
+inherit iter LIB_ITERATOR;
 
 private object	*contents;
 private int		_type;
+
+void create()
+{
+	iter::create();
+	tag::create();
+}
 
 void constructor(int uid)
 {
@@ -84,5 +91,31 @@ void addContents(mixed o)
 	} else {
 		error("not object or *object");
 	}
+}
+
+/* -------------- iterator ------------ */
+object iterator()
+{ 
+	return iter::iterator();  
+}
+
+mixed Iter_get(int index)
+{ 
+	return contents[index];
+}
+
+int Iter_size()
+{ 
+	return sizeof(contents);
+}
+
+int Iter_set(int index, mixed val)
+{ 
+	error("not implemented"); 
+}
+
+int Iter_remove(int index)
+{ 
+	error("not implemented");
 }
 
