@@ -29,10 +29,14 @@
  *	replace()		replace str in bstr
  */
 
-# include <kernel/kernel.h>
 # include <limits.h>
 # include <type.h>
 # include "../include/shared.h"
+#ifndef __IGOR_GLUE__
+# include <kernel/kernel.h>
+#endif
+
+/*# define IMPLODE_EXPLODE*/
 
 inherit iter LIB_ITERATOR;
 inherit LIB_HTTP_STRING;
@@ -608,7 +612,7 @@ int replace(string findwhat, string replacewith)
 	return TRUE;
 }
 
-# if 0
+#ifdef IMPLODE_EXPLODE
 object *explode(string str)
 {
 	object *ret;
@@ -649,6 +653,7 @@ object *explode(string str)
 }
 
 
+/* NOTE: This _appends_ to current string */
 int implode(object *arr, string str)
 {
 	int i;
@@ -660,7 +665,19 @@ int implode(object *arr, string str)
 
 	return TRUE;
 }
-# endif
+
+
+string *str_explode(string str)
+{
+}
+
+
+/* NOTE: This _appends_ to current string */
+int str_implode(string *arr, string str)
+{
+	return insert(implode(arr, str)); 
+}
+#endif /* IMPLODE_EXPLODE */
 
 
 string to_string()

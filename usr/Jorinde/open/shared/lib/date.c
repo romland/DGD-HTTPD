@@ -4,7 +4,9 @@
  * License:     (c)2004 Joakim Romland, see doc/License
  */
 # include "../include/shared.h"
+#ifndef __IGOR_GLUE__
 # include <kernel/kernel.h>
+#endif
 # include <type.h>
 
 inherit LIB_HTTP_STRING;
