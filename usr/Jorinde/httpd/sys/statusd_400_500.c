@@ -29,7 +29,7 @@ int xml_parameter(string key, mixed value)
 }
 
 
-string error_page(object response)
+string error_page(Response response)
 {
 	int status;
 	status = response->get_status();

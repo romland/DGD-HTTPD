@@ -3,14 +3,16 @@
 
 static mapping cookies;
 
+
 void create(varargs int clone)
 {
 	cookies = ([ ]);
 }
 
-void    set_cookie(object c)		{	cookies[c->get_name()] = c;		}
-object  get_cookie(string n)		{	return cookies[n];				}
+void    set_cookie(Cookie c)		{	cookies[c->get_name()] = c;		}
+Cookie	get_cookie(string n)		{	return cookies[n];				}
 mapping get_cookies()				{	return cookies + ([ ]);			}
+
 
 /**
  * Takes a request's cookie string and generate cookie-object(s).
@@ -23,18 +25,24 @@ int cookies_fromstring(string s)
 
 	if(s && s != "") {
 		arr = explode(s, ";");
+
 		for(i = 0; i < sizeof(arr); i++) {
-			object cookie;
+			Cookie cookie;
+			
 			cookie = new_object(HTTP_COOKIE);
+
 			if( cookie->fromstring(arr[i]) ) {
 				set_cookie(cookie);
 			} else {
 				SYSLOG("Error onverting cookie: " + arr[i] + " to object.\n");
 			}
 		}
+
 	}
+
 	return TRUE;
 }
+
 
 string cookies_tostring()
 {
@@ -42,13 +50,17 @@ string cookies_tostring()
 		int i;
 		string x;
 		string *indices;
+	
 		x = "";
 		indices = map_indices(cookies);
+		
 		for(i = 0; i < sizeof(indices); i++) {
 			x += "Set-Cookie: " + cookies[indices[i]]->tostring() + "\r\n";
 		}
+		
 		return x;
 	}
+
 	return "";
 }
 

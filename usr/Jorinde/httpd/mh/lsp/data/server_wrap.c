@@ -14,9 +14,14 @@ inherit LIB_LSP_PROPERTY_WRAP;
 inherit "/lib/lwo";
 #endif
 
-static object request, response, application, server, session;
+static Request request;
+static Response response;
+static Application application;
+static Httpd server;
+static Session session;
 
-void set_related(object req, object res, object app, object ser, object ses) {
+void set_related(Request req, Response res, Application app, Httpd ser, 
+		Session ses) {
 	request = req;
 	response = res;
 	application = app;

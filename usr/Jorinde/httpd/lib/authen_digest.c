@@ -98,7 +98,7 @@ static int stale_nonce(string nonce)
 	return TRUE;
 }
 
-private int get_au(object request, mixed *au)
+private int get_au(Request request, mixed *au)
 {
 	string method, str, attribs;
 	mapping avp;
@@ -125,7 +125,7 @@ private int get_au(object request, mixed *au)
 /*
  * 
  */
-static string authenticate(object request)
+static string authenticate(Request request)
 {
 	int		stale;
 	mixed	*au_req, *au_res;
@@ -207,7 +207,7 @@ static string authenticate(object request)
 	return nil;
 }
 
-static string initialize(object request)
+static string initialize(Reqest request)
 {
 	string realm, nonce, opaque, stale, algorithm, qop;
 

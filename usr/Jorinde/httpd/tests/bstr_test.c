@@ -4,7 +4,7 @@
 
 inherit test LUNIT+"lib/testcase";
 
-private object bstr;
+private BigString bstr;
 
 static void create()
 {
@@ -52,7 +52,7 @@ void testCreate()
 
 void testIterate()
 {
-	object iter;
+	Iterator iter;
 
 	iter = bstr->iterator();
 	assert_notnil(	iter				);
@@ -63,7 +63,7 @@ void testIterate()
 
 void testConcat()
 {
-	object iter;
+	Iterator iter;
 	string str;
 
 	str = "";
@@ -80,7 +80,7 @@ void testConcat()
 
 void testInsert()
 {
-	object iter;
+	Iterator iter;
 	string str;
 
 	str = "";
@@ -97,7 +97,7 @@ void testInsert()
 
 void testPrepend()
 {
-	object iter;
+	Iterator iter;
 	string str;
 
 	str = "";
@@ -114,7 +114,7 @@ void testPrepend()
 
 void testPrepend2()
 {
-	object iter;
+	Iterator iter;
 	string str;
 
 	str = "";
@@ -149,7 +149,7 @@ void testSubstr()
 
 void testSubbstr()
 {
-	object tmpbstr;
+	BigString tmpbstr;
 
 	tmpbstr = bstr->subbstr(100, 140000);
 
@@ -177,7 +177,7 @@ void testReplace()
 
 void testTostring()
 {
-	object tmpbstr;
+	BigString tmpbstr;
 
 	/* Test to_string() */
 	tmpbstr = bstr->subbstr(0, 27);
@@ -187,7 +187,7 @@ void testTostring()
 
 void testClear()
 {
-	object iter;
+	Iterator iter;
 	string str;
 
 	bstr->clear();
@@ -209,7 +209,7 @@ void testClear()
 */
 void testInsertBig()
 {
-	object iter;
+	Iterator iter;
 	string str;
 
 	/* fill bstr with a lot of data */

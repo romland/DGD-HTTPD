@@ -47,7 +47,7 @@ string get_lsp_home()
 	return lsp_home;
 }
 
-int get_compile(object request, object response)
+int get_compile(Request request, Response response)
 {
 	string time, size, name, hash;
 
@@ -232,7 +232,7 @@ string parse(string source)
 }
 
 
-object compile(object request, object response, string source)
+object compile(Request request, Response response, string source)
 {
 	string err, name, hash;
 

@@ -13,18 +13,24 @@ static void create()
 {
 }
 
-static object create_uri(string str, string root)
+
+static Uri create_uri(string str, string root)
 {
-	object ob;
+	Uri ob;
+
 	if(!str || !strlen(str)) {
 		return nil;
 	}
+
 	ob = new_object(HTTP_URI);
+	
 	if(!(ob->set( str, root ))) {
 		return nil;
 	}
+
 	return ob;
 }
+
 
 static string get_suffix_only(string filename)
 {
@@ -57,6 +63,7 @@ static string get_file_only(string filename)
 	a = explode(filename, "/");
 	return a[sizeof(a)-1];
 }
+
 
 mixed *parse_request_uri(string str) { error("deprecated"); }
 

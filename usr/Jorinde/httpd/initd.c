@@ -7,13 +7,14 @@
 # include <status.h>
 # include "include/www.h"
 # include "include/object.h"
+# include "../lunit/include/path.h"
 
 private Httpd server;
 
 
 static void create(varargs int clone)
 {
-	object runner;
+	TestRunner runner;
 
 	COMPILE(HTTP_LOGD);						/* Log daemon */
 	COMPILE(DAV_HOME + "initd");			/* Initialize DAV objects */

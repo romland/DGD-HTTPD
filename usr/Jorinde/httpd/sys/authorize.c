@@ -43,7 +43,7 @@ int xml_parameter(string key, mixed value)
  */
 nomask int authorize(string file, int type)
 {
-	object	user;
+	User	user;
 	string	name;
 	int		granted;
 

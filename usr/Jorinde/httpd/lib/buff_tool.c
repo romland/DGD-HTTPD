@@ -11,7 +11,7 @@
 inherit f LIB_FILE_TOOL;
 inherit etag "./etag";
 
-private object	buffer;
+private Response	buffer;
 
 
 private int lid;
@@ -41,7 +41,7 @@ nomask static void message(string str)
  * Args: request, response, file offset, data length
  * Rets: TRUE on success, FALSE otherwise.
  */
-nomask static int write_resource(object request, object response,
+nomask static int write_resource(Request request, Response response,
 						int offset, int length)
 {
 	int i;
@@ -85,7 +85,7 @@ nomask static int write_resource(object request, object response,
  * Args:
  * Rets: TRUE on success, FALSE otherwise.
  */
-nomask static int read_resource(object request, object response,
+nomask static int read_resource(Request request, Response response,
 						int offset, int length)
 {
 	int i, anonymous;
@@ -144,14 +144,14 @@ nomask static int read_resource(object request, object response,
  *
  *       Another solution is of course to NOT keep a pointer to the
  *       request; then we'd need to move all data in request that we
- *       depend on to the response-object (not too much, I think?)
+ *       depend on to the response (not too much, I think?)
  * Args:
  * Rets:
  */
-nomask static int send(object response, int send_headers, int send_content)
+nomask static int send(Response response, int send_headers, int send_content)
 {
 	int i, rod, csize;
-	object owner;
+	User owner;
 
 	rod = response->get_read_on_demand();
 	owner = get_owner();
@@ -210,11 +210,13 @@ nomask static int send(object response, int send_headers, int send_content)
 /*
  * EVT_MESSAGE_DONE
  */
-nomask void lwo_evt_message_done(object user)
+nomask void lwo_evt_message_done(User user)
 {
 	user->unsubscribe(EVT_MESSAGE_DONE);
+
 	if(buffer) {
-		object response;
+		Response response;
+		
 		response = buffer;
 		buffer = nil;
 		if(!send(response, FALSE, TRUE)) {

@@ -60,7 +60,7 @@ int xml_parameter(string key, mixed value)
 
 
 /* returns authenticated user on success, nil otherwise */
-nomask string authenticate(object request)
+nomask string authenticate(Request request)
 {
 	string header, method;
 
@@ -91,7 +91,7 @@ nomask string authenticate(object request)
 }
 
 
-nomask int initialize(object request, object response)
+nomask int initialize(Request request, Response response)
 {
 #ifdef BASIC
 	SYSLOG("authenticate.c: Accepting Basic...\n");

@@ -53,7 +53,7 @@
 # define LIB_HTTP_COOKIE		HTTP_HOME + "lib/cookie"
 # define LIB_HTTP_HEADER		HTTP_HOME + "lib/header"
 # define LIB_HTTP_CONTENT		HTTP_HOME + "lib/content"
-# define LIB_HTTP_SESSION		HTTP_HOME + "lib/session"
+# define LIB_HTTP_SESSION		HTTP_HOME + "lib/session" /* Used by app.c */
 # define LIB_HTTP_CMD_PLUGINS	HTTP_HOME + "lib/command_plugins"
 #if 0
 # define LIB_HTTP_CONNECTION	HTTP_HOME + "lib/connection"
@@ -72,7 +72,7 @@
 # define Application		object LIB_HTTP_APP
 # define Cookie				object LIB_HTTP_STRING	/* no lib for data/cookie*/
 # define Content			object LIB_HTTP_CONTENT
-# define Session			object LIB_HTTP_SESSION
+# define Session			object JORINDE_SHARED+"lib/properties" /*no lib*/
 # define Mediahandler		object LIB_HTTP_MEDIAHANDLER
 # define BufferingUser		object LIB_HTTP_BUFF_USER
 # define BufferingTool		object LIB_HTTP_BUFF_TOOL

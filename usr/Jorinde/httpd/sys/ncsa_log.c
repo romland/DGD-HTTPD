@@ -38,7 +38,7 @@ int xml_parameter(string key, mixed value)
  * NCSA extended/combined log format:
  *		"%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""
  */
-static string format_log(string format, object request, object response)
+static string format_log(string format, Request request, Response response)
 {
 	int i, x;
 	string *fmt, entry, token, tmp;
@@ -107,7 +107,7 @@ static string format_log(string format, object request, object response)
 	return entry;
 }
 
-void log(object request, object response)
+void log(Request request, Response response)
 {
 	write_file(filename, format_log(logformat, request, response) + "\n");
 }

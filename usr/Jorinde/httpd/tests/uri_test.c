@@ -27,7 +27,7 @@ void teardown()
 # define NEW() new_object(HTTP_URI);
 void testURI()
 {
-	object uri;
+	Uri uri;
 
 	uri = NEW();
 	uri->set("http://foo-bar.xs4all.nl:81/index.lsp?foo=1#sect",
@@ -46,7 +46,7 @@ void testURI()
 
 void testURI2()
 {
-	object uri;
+	Uri uri;
 
 	uri = NEW();
 	uri->set("/index.lsp?foo=1#sect", "/usr/www/webroot/");

@@ -5,8 +5,6 @@
 inherit test LUNIT+"lib/testcase";
 inherit date JORINDE_SHARED+"lib/encdec";
 
-object objectd;
-
 static void create()
 {
 	test::create("conversion");

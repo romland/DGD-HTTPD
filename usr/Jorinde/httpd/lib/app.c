@@ -14,15 +14,15 @@
 inherit str		LIB_HTTP_STRING;
 
 private string	webroot, hostname, timezone;
-private object	server;
+private Httpd	server;
 private string	*default_docs;
 private mapping	status;
 private string	*allowed_methods;
 private string	port;
 private int		anon_acc;
 
-nomask static void set_server(object arg);
-nomask object get_server();
+nomask static void set_server(Httpd arg);
+nomask Httpd get_server();
 
 static void create(varargs int clone)
 {
@@ -46,12 +46,12 @@ nomask static string *get_default_documents()
 	return default_docs + ({ });
 }
 
-nomask static void set_server(object arg)
+nomask static void set_server(Httpd arg)
 {
 	server = arg;
 }
 
-nomask object get_server()
+nomask Httpd get_server()
 {
 	return server;
 }
@@ -187,7 +187,7 @@ nomask static void set_error_pages(object handler)
 /**
  * Leave maskable.
  */
-int get_error_page(object response)
+int get_error_page(Response response)
 {
 	int code;
 	response->set_header("Content-Type", "text/html");

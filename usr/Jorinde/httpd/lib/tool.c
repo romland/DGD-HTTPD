@@ -63,7 +63,7 @@ nomask string get_plugin_version()
 }
 
 
-static int access_denied(object request, object response)
+static int access_denied(Request request, Response response)
 {
 	/* TODO: Huh? Clear name please? */
 	authend->initialize(request, response);
@@ -71,7 +71,7 @@ static int access_denied(object request, object response)
 }
 
 
-static nomask int has_access(object request, object response, int type)
+static nomask int has_access(Request request, Response response, int type)
 {
 	if(accessd->authorize(request->get_uri()->get_absolute_filename(), type) == FALSE) {
 		response->set_status(401);

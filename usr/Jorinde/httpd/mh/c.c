@@ -24,7 +24,7 @@ int get_supports(string filesuffix)
 }
 
 
-int handle(object request, object response)
+int handle(Request request, Response response)
 {
 	if(!get_supports(request->get_uri()->get_filesuffix())) {
 		return FALSE;

@@ -66,7 +66,7 @@ int get_supports(string filesuffix)
 }
 
 
-int get_need_content(object request, object response)
+int get_need_content(Request request, Response response)
 {
 	if(compiler->get_compile(request, response) == TRUE)
 		return TRUE;
@@ -83,7 +83,7 @@ static object new_wrapper(string program)
 /*
  * This is the entry point for handling this mediatype.
  */
-int handle(object request, object response)
+int handle(Request request, Response response)
 {
 	int i;
 	string *arr, content;

@@ -43,7 +43,7 @@
 # include <kernel/access.h>
 # include <status.h>
 # include "../include/dav.h"
-# define USER() (previous_object() == get_owner())
+# define USER() ((User)previous_object() == get_owner())
 
 inherit tool	"../../lib/tool";
 inherit str		LIB_HTTP_STRING;

@@ -153,7 +153,7 @@ string get_contenttype(string filesuffix)
 }
 
 
-int handle_mediatype(object request, object response)
+int handle_mediatype(Request request, Response response)
 {
 	mixed *mediastruct;
 	string filesuffix;
@@ -183,7 +183,7 @@ int handle_mediatype(object request, object response)
  * This is called prior to reading any data from disk; does
  * media-handler need to read content of file? TRUE/FALSE.
  */
-int get_need_content(object request, object response)
+int get_need_content(Request request, Response response)
 {
 	object mh;
 	string filesuffix;
@@ -223,7 +223,7 @@ void delete_mediatype(string filesuffix)
 }
 
 
-void http_log(object request, object response)
+void http_log(Request request, Response response)
 {
 	if(request == nil)	{ SYSLOG("no request-ob, can't log\n"); return; }
 	if(response == nil)	{ SYSLOG("no response-ob, can't log\n"); return; }

@@ -116,7 +116,8 @@ static void create(varargs int clone)
 	elts = config->xpath( "server/applications/application" );
 	applications = ([ ]);
 	for(j = 0; j < sizeof(elts); j++) {
-		object app, appconfig;
+		Application app;
+		object appconfig;
 		string hostname, tmp;
 
 		elt = elts[j];
@@ -242,7 +243,7 @@ mapping get_status_codes()
 }
 
 
-object get_application(string host, int port)
+Application get_application(string host, int port)
 {
 	if(host && applications[host + ":" + port]) {
 		return applications[host + ":" + port][HTAPP_OBJECT];
@@ -261,7 +262,7 @@ int get_keep_alive_time()
 /**
  * Called by ~System/httpd/binarymgr.c
  */
-int selected(int port, object user)
+int selected(int port, User user)
 {
 	if(previous_object() != binaryd) {
 		error("illegal call");

@@ -19,7 +19,8 @@
 
 #define ELEVATOR	(get_owner()->get_application()->get_elevator())
 
-private object tool, owner;
+private object tool;
+private User owner;
 
 
 static void create()
@@ -33,19 +34,21 @@ nomask void set_tool(object t)
 	if(!SYSTEM()) {
 		error("illegal call");
 	}
+
 	tool = t;
 }
 
 
-nomask void set_owner(object user)
+nomask void set_owner(User user)
 {
 	if(!SYSTEM()) {
 		error("illegal call");
 	}
+
 	owner = user;
 }
                                                                                 
-nomask object get_owner() { return owner; }
+nomask User get_owner() { return owner; }
 
 
 /**

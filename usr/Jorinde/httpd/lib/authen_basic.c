@@ -63,7 +63,7 @@ static string authenticate(string authstr)
 }
 
 
-static string initialize(object request)
+static string initialize(Request request)
 {
 	return "Basic realm=\"" + request->get_header("Host") + "\"";
 }

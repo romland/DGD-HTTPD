@@ -8,7 +8,7 @@
 # include <kernel/kernel.h>
 # include "../include/www.h"
 
-# define OWNER() (previous_object() == get_owner())
+# define OWNER() ((User)previous_object() == get_owner())
 
 inherit tool LIB_HTTP_TOOL;
 #ifdef __IGOR__

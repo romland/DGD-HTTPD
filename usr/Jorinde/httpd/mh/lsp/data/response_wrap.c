@@ -15,10 +15,16 @@ inherit LIB_LSP_PROPERTY_WRAP;
 inherit "/lib/lwo";
 #endif
 
-static object request, response, application, server, session;
+static Request request;
+static Response response;
+static Application application;
+static Httpd server;
+static Session session;
+static Uri req_uri;
 static int expires_in;
 
-void set_related(object req, object res, object app, object ser, object ses) {
+void set_related(Request req, Response res, Application app, Httpd ser,
+		        Session ses) {
 	request = req;
 	response = res;
 	application = app;
@@ -44,7 +50,7 @@ string  get_charset()					{ return response->get_charset(); }
 int		get_expires_in()				{ return expires_in;              }
 
 mapping get_headers()					{ return response->get_headers(); }
-object  get_cookies()					{ return response->get_cookies(); }
+Cookie  get_cookies()					{ return response->get_cookies(); }
 
 void	set_header(string a, string b)	{ response->set_header(a, b); }
 void	set_status(int stat)			{ response->set_status(stat); }
@@ -81,11 +87,13 @@ void write(mixed arg)
 	response->add_content(arg);
 }
 
-object new_cookie()
+Cookie new_cookie()
 {
-	object cookie;
+	Cookie cookie;
+
 	cookie = new_object(HTTP_COOKIE);
 	response->set_cookie(cookie);
+
 	return cookie;
 }
 

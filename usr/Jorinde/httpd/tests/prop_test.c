@@ -4,7 +4,7 @@
 
 inherit test LUNIT+"lib/testcase";
 
-private object server;
+private Httpd server;
 
 static void create()
 {

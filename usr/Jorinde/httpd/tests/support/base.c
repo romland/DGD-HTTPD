@@ -4,7 +4,7 @@
 
 inherit test LUNIT+"lib/testcase";
 
-private object bstr;
+private BigString bstr;
 
 static void create()
 {

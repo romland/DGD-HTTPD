@@ -12,7 +12,7 @@ inherit str		LIB_HTTP_STRING;
 inherit util	LIB_XML_UTIL;
 inherit "./xmlutil";
 
-nomask object get_owner();
+nomask User get_owner();
 
 static void create()
 {

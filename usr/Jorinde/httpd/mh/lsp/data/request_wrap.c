@@ -13,9 +13,15 @@ inherit LIB_LSP_PROPERTY_WRAP;
 inherit "/lib/lwo";
 #endif
 
-static object request, response, application, server, session, req_uri;
+static Request request;
+static Response response;
+static Application application;
+static Httpd server;
+static Session session;
+static Uri req_uri;
 
-void set_related(object req, object res, object app, object ser, object ses) {
+void set_related(Request req, Response res, Application app, Httpd ser, 
+		Session ses) {
 	if(req == nil) error("request is nil in wrapper.\n");
     if(res == nil) error("response is nil in wrapper.\n");
     if(app == nil) error("application is nil in wrapper.\n");
@@ -37,7 +43,7 @@ void create(varargs int clone)
 	/* ... */
 }
 
-void initialize(object ob)
+void initialize(Request ob)
 {
 	request = ob;
 }
@@ -50,15 +56,17 @@ mapping  items()			{ return req_uri->get_query_items();		}
  * TODO: questionable wrapper-names, return values, but I just want to
  * test it now. NOTE: THIS WILL CHANGE!
  */
-object	form(string a)		{ return request->get_post_item(a);			}
+Content	form(string a)		{ return request->get_post_item(a);			}
 mapping form_items()		{ return request->get_formdata();			}
 
 string form_string(string a)
 {
-	object ob;
+	Content ob;
+
 	if((ob = form(a))) {
 		return ob->content_tostring();
 	}
+
 	return "";
 }
 
@@ -71,8 +79,8 @@ string   ip_name()			{ return request->get_client_ip_name();		}
 string   ip_number()		{ return request->get_client_ip_number();	}
 mixed    header(string a)	{ return request->get_header(a);			}
 mapping  headers()			{ return request->get_headers();			}
-object   cookie(string a)	{ return request->get_cookie(a);			}
-object   cookies()			{ return request->get_cookies();			}
+Cookie   cookie(string a)	{ return request->get_cookie(a);			}
+Cookie   cookies()			{ return request->get_cookies();			}
 
 string   abs_filename()		{ return req_uri->get_absolute_filename();	}
 
@@ -84,7 +92,8 @@ string content()
 	return request->content_tostring();
 }
 
-int relay_content(object obj, string func)
+
+int relay_content(Content obj, string func)
 {
 	int i;
 	string str;
@@ -100,10 +109,11 @@ int relay_content(object obj, string func)
 	return TRUE;
 }
 
+
 /**
  * TODO: Obtain an iterator over content-array in request.
  */
-object iterator()
+Iterator iterator()
 {
 	return request->iterator(1);
 }

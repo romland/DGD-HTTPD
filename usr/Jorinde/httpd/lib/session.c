@@ -11,7 +11,7 @@ inherit LIB_HTTP_STRING;
 
 static int     length, track, last_clean;
 static string  key, name;
-static object  app;
+static Application app;
 
 /* ([ string session-id : ({ int expiry time, object session }) ]) */
 static mapping sessions;
@@ -28,6 +28,7 @@ void   set_session_name(string arg)		{ name = arg; }
 
 int    remove_session(string id)		{ sessions[id] = nil; }
 
+
 /**
  * TODO: This lib should probably have another name. app_session or so? 
  *       I'm tired.
@@ -41,12 +42,13 @@ void create(varargs int clone)
 	last_clean = time();
 }
 
-void set_session_object(string id, object ses)
+
+void set_session_object(string id, Session ses)
 {
-	/* TODO */
+	error("TODO: Added error on 14jan2005 to see if it's used");
 }
 
-object get_session_object(string id)
+Session get_session_object(string id)
 {
 	if(sessions[id] && typeof(sessions[id]) == T_ARRAY) {
 		return sessions[id][1];
@@ -54,10 +56,12 @@ object get_session_object(string id)
 	return nil;
 }
 
+
 private string new_id()
 {
 	return hex_encode( hash_md5("" + random(0x7fffffff) + time()) );
 }
+
 
 private void clean()
 {
@@ -75,15 +79,18 @@ private void clean()
 	}
 }
 
+
 /*
  * TODO: The breadcrumb-stuff should be moved elsewhere and make
  * a hook in the application if they want the functionality.
  */
-object get_session_cookie(object request)
+Cookie get_session_cookie(Request request)
 {
 	int expires;
 	string id;
-	object cookie, old, session;
+	Cookie cookie;
+	Cookie old;
+	Session session;
 
 	if(time() > (last_clean + 5*60)) {
 		clean();
