@@ -12,7 +12,8 @@
 
 /* TODO: This depends on HTTPD, which is not good */
 #ifndef SYSLOG
-# define SYSLOG(x)              (JORINDE_HTTPD+"sys/logd")->syslog(x)
+# define SYSLOG(x)				(JORINDE_HTTPD+"sys/logd")->syslog(x)
+# define DGDSYSLOG(x)			(JORINDE_HTTPD+"sys/logd")->dgdsyslog(x)
 #endif
 
 # include "./shared/include/shared.h"
