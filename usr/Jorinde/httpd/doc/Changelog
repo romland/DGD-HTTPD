@@ -255,3 +255,5 @@ Version 0.3.14, 12-aug-2004 (rev. 285+)
 - Moved WORKING_ON to doc
 - Making svn.berlios.de the main repository (restructured repo layout)
 
+Version 0.3.15, 27-dec-2004 (?+)
+- Minor updates + fixes for 'new' xml-root object.
