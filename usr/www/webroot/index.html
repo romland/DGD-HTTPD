@@ -2,22 +2,20 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" >
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-	<title>foo-bar</title>
-	<link rel="stylesheet" type="text/css" href="css/029.css" media="screen"/>
+	<title>webserver/webdav in lpc (using DGD)</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css" media="screen"/>
 </head>
-<body id="css-zen-garden">
+<body>
 <div id="container">
 	<div id="intro">
 		<div id="preamble">
 			<h3>
-				<span>httpd's home</span>
+				<span>home</span>
 			</h3>
 			<p class="p1">
 				<span>
 					Home of <acronym title="a web-server written in LPC">
-					Jorinde httpd</acronym>, written by Joakim Romland
-					(aka Trickster@IgorMud).
+					Jorinde httpd</acronym>, written by Joakim Romland.
 				</span>
 			</p>
 			<!--
@@ -47,36 +45,35 @@
 		<div id="explanation">
 			<h3><span>Information</span></h3>
 			<p class="p1"><span>
-                Jorinde httpd is a webserver (http 1.0 and some of the 
-				important features of 1.1). It also supports WebDAV through
-				a plugin which is in the default installation.
+                Jorinde httpd is a webserver supporting http 1.0 and some of 
+				the important features of 1.1. WebDAV, which can be seen as 
+				a replacement to FTP is supported through a plugin which is 
+				in the default installation. In the package you also have an
+				XML processor and a unit-test framework plus a few other 
+				applications which the httpd depends on.
             </span></p>
 
             <p class="p2"><span>
-                The grand plan is: HTTP/1.[0/1], WebDAV, and usable API's
-				to write extensions. 
-            </span></p>
-
-            <p class="p2"><span>
-                The server is written in LPC runs (by default) above vanilla
+                The server is written in LPC and runs above vanilla
                 <acronym title="Dworkin's Generic Driver">DGD</acronym> and
-                its Kernel Library.
+                its Kernel Library. It has been ported to work on 
+				environments not built on the Kernel Library since you can
+				plug in your own modules for authorization, authentication
+				etc.
             </span></p>
 
 			<p class="p2"><span>
 				Development started on 20th of January 2004, but due to lazines
 				and being somewhat busy I've taken longer breaks from working
-				on it lately. The current version is 0.3.13 and I intend to 
-				release full source-code when I bump the version up to 0.4.0; 
-				I expect that to happen this month (july 2004). 
+				on it lately. The current version is 0.3.14.
 			</span></p>
 
             <p class="p2"><span>
-				The source code will be available from a 
+				The source code is available from a 
 				<a href="http://subversion.tigris.org">Subversion</a> repository
 				(a compelling CVS replacement) at 
 				<a href="http://developer.berlios.de/projects/dgd-httpd/">Berlios</a>, 
-				which will also be the future 
+				which also hosts the 
 				<a href="http://dgd-httpd.berlios.de/">home</a> 
 				of the application.
 
