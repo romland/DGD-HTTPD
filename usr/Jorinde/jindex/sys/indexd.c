@@ -291,7 +291,7 @@ static int create_filelist(string path)
 				ret++;
 			}
 			/* ({ size, read bytes, modified, indexed, scheduled }) */
-			fileinfo[fileid] = ({ sizes[i], 0, times[i], nil, TRUE });
+			fileinfo[fileid] = ({ sizes[i], 0, times[i], 0, TRUE });
 		}
 	}
 

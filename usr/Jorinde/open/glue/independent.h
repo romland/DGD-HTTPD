@@ -18,6 +18,4 @@
  * Define this if you want to test the indexing crap :)
  * /
 # define __TEST_INDEXD__
- */
-                                                                                
-
+*/
