@@ -15,8 +15,10 @@ inherit cookie  LIB_HTTP_COOKIE;
 inherit "/lib/lwo";
 #endif
 
-static int     status, rod_flag;
-static object  app, request, server;
+static int			status, rod_flag;
+static Application	app;
+static Request		request;
+static Httpd		server;
 
 static int **ranges;
 
@@ -106,17 +108,18 @@ void set_read_range(int offset, int length)
 #endif
 }
 
-object get_application()			{	return app;		}
+Application get_application()		{	return app;		}
 
 void   set_status(int arg)			{	status = arg;	}
 int    get_status()					{	return status;	}
 
-void   set_request(object arg)		{	request = arg;	}
-object get_request()				{	return request;	}
+void   set_request(Request arg)		{	request = arg;	}
+Request	get_request()				{	return request;	}
 
 string get_session_id()
 {
-	object c;
+	Cookie c;
+
 	c = get_cookie( app->get_session_name() );
 	if(c) {
 		return c->get_value( app->get_session_key() );

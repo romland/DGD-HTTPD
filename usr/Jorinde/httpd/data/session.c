@@ -18,7 +18,7 @@ static mapping values;
 #endif
 static string  id;
 static int     expires, remove;
-static object  app;
+static Application	app;
 
 void create(varargs int clone)
 {
@@ -35,14 +35,14 @@ void set_id(string arg)				{ id = arg;				}
 void set(mixed key, mixed value)	{ set_property(key, value);	}
 void set_expires(int when)			{ expires = when;		}
 void set_remove(int arg)			{ remove = arg;			}
-void set_application(object arg)	{ app = arg;			}
+void set_application(Application arg) { app = arg;			}
 
 mixed   get(mixed key)				{ return get_property(key);	}
 mapping get_all()					{ return get_properties();	}
 string  get_id()					{ return id;			}
 int     get_expires()				{ return expires;		}
 int     get_remove()				{ return remove;		}
-object  get_application()			{ return app;			}
+Application  get_application()		{ return app;			}
 
 
 #define BC			"$BREADCRUMBS"

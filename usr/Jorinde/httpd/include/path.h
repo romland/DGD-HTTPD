@@ -38,6 +38,7 @@
 # define HTTP_TOOL				HTTP_HOME + "data/httptool"
 
 /* HTTPD-core Libraries */
+# define LIB_HTTP_SERVER		HTTP_HOME + "lib/server"
 # define LIB_HTTP_AUTH_BASIC    HTTP_HOME + "lib/authen_basic"
 # define LIB_HTTP_AUTH_DIGEST   HTTP_HOME + "lib/authen_digest"
 # define LIB_HTTP_AUTHORIZE     HTTP_HOME + "lib/authorize"
@@ -65,6 +66,21 @@
 
 /* Confusing name seeing as we have a httptool.c and this is NOT it */
 # define LIB_HTTP_TOOL			HTTP_HOME + "lib/tool"
+
+/* Object types */
+# define Uri				object LIB_HTTP_URI
+# define Application		object LIB_HTTP_APP
+# define Cookie				object LIB_HTTP_STRING	/* no lib for data/cookie*/
+# define Content			object LIB_HTTP_CONTENT
+# define Session			object LIB_HTTP_SESSION
+# define Mediahandler		object LIB_HTTP_MEDIAHANDLER
+# define BufferingUser		object LIB_HTTP_BUFF_USER
+# define BufferingTool		object LIB_HTTP_BUFF_TOOL
+# define Request			object LIB_HTTP_HEADER	/* no request lib */
+# define Response			object LIB_HTTP_HEADER	/* no response lib */
+# define User				object LIB_HTTP_BUFF_USER
+# define Mime				object LIB_HTTP_CONTENT	/* no mime lib */
+# define Httpd				object LIB_HTTP_SERVER
 
 /* HTTPD-core Services */
 #if 0

@@ -17,8 +17,11 @@ inherit LIB_HTTP_ENCDEC;
 inherit "/lib/lwo";
 #endif
 
-static object	owner, app, request, response;
-static int		expected_length;
+static User			owner;
+static Application	app;
+static Request		request;
+static Response		response;
+static int			expected_length;
 
 static int		started, complete;
 /*static string	boundary, type;
@@ -245,7 +248,7 @@ TODO: Make this consistent, what is calling this?
 }
 
 
-int set_part_headers(string str, object part)
+int set_part_headers(string str, Mime part)
 {
 	int i;
 	string *lines, *line;
@@ -279,9 +282,9 @@ mapping get_parts_urlencoded()
 	 */
 	items = explode(content_tostring(), "&");
 	for(i = 0; i < sizeof(items); i++) {
-		object part;
+		Mime part;
 		item = explode(items[i], "=");
-		/* Note that the 'mime' object is not REALLY made for this purpose,
+		/* Note that the 'mime' is not REALLY made for this purpose,
 		 * so we do not set any headers in it, just content.
 		 */
 		part = new_object(HTTP_MIME);
@@ -305,7 +308,7 @@ mapping get_parts_urlencoded()
 mapping get_parts()
 {
 	string  b, c;
-	object  part;
+	Mime	part;
 	mapping parts;
 	int     i, blen, clen, chsize;
 
@@ -417,11 +420,9 @@ int add_part(string str)
 	return TRUE;
 }
 
-void	set_response(object o)	{ error("deprecated"); response = o; }
-object	get_response()			{ error("deprecated"); return response; }
-
-void	set_request(object o)	{ request = o; }
-object	get_request()			{ return request; }
+/* TODO: This request shit does not belong here */
+void	set_request(Request o)	{ request = o; }
+Request	get_request()			{ return request; }
 
 int		get_started()			{ return started; }
 

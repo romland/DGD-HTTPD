@@ -8,7 +8,7 @@
 # include "include/www.h"
 # include "include/object.h"
 
-private object server;
+private Httpd server;
 
 
 static void create(varargs int clone)
@@ -51,7 +51,7 @@ static void create(varargs int clone)
 }
 
 
-object get_server()
+Httpd get_server()
 {
 	return server;
 }

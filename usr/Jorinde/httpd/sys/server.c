@@ -15,6 +15,7 @@
 # define SECURE()	if(!SYSTEM()) error("illegal call\n")
 
 inherit props JORINDE_SHARED+"lib/properties";
+inherit LIB_HTTP_SERVER;
 inherit LIB_HTTP_STRING;
 inherit LIB_XML_UTIL;
 

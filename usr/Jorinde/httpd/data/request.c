@@ -16,17 +16,19 @@ inherit 		LIB_DATE;
 inherit "/lib/lwo";
 #endif
 
-static object app, owner;
-static string command, protocol, protocol_version;
-static string host_name, host_ip;
-static string authenticated;
-static int    badrequest;
+static Application	app;
+static User			owner;
+static string		command, protocol, protocol_version;
+static string		host_name, host_ip;
+static string		authenticated;
+static int			badrequest;
 
 static int    port;
 static mapping formdata;		/* posted form-items */
 
 static string debug_ruri;
-static object uri, dest_uri;
+static Uri uri;
+static Uri dest_uri;
 
 
 # define DEPRECATED	error("deprecated")
@@ -66,18 +68,17 @@ static void create(varargs int clone)
 }
 
 
-object get_application()
+Application get_application()
 {
 	return app;
 }
 
-object get_uri()
+Uri get_uri()
 {
 	return uri;
 }
 
-/* ob should be an uri-object */
-private int is_below_webroot(object ob)
+private int is_below_webroot(Uri ob)
 {
 	string abs_root, abs_path;
 
@@ -102,7 +103,7 @@ private int is_below_webroot(object ob)
 
 int set_uri(string str)
 {
-	if(previous_object() != owner) {
+	if((User)previous_object() != owner) {
 		error("illegal call");
 	}
 
@@ -116,7 +117,7 @@ int set_uri(string str)
 }
 
 
-object get_destination_uri()
+Uri get_destination_uri()
 {
 	if(dest_uri == nil) {
 		dest_uri = create_uri(get_header("Destination"), app->get_webroot());
@@ -241,10 +242,10 @@ string get_client_ip_name()				{ return host_name;			}
 string get_client_ip_number()			{ return host_ip;			}
 
 mapping get_formdata()					{ return formdata;			}
-object get_post_item(string arg)		{ return formdata[arg];		}
+Content get_post_item(string arg)		{ return formdata[arg];		}
 
 void set_formdata(mapping m)			{ formdata = m;				}
-void set_post_item(string a, object o)	{ formdata[a] = o;			}
+void set_post_item(string a, Content o)	{ formdata[a] = o;			}
 
 void set_command(string arg)			{ command = arg;			}
 void set_protocol(string arg)			{ protocol = arg;			}

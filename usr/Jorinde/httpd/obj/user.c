@@ -1,5 +1,5 @@
 /**
- * Description: User-object for Jorinde (http/dav).
+ * Description: User-object for Jorinde httpd.
  * Version:	 $Id$
  * License:	 (c)2004 Joakim Romland, see doc/License
  */
@@ -25,15 +25,16 @@ inherit str		LIB_HTTP_STRING;
 inherit 		LIB_DATE;
 inherit cmds	LIB_HTTP_CMD_PLUGINS;
 
-private	int		keep_alive;
-private object  app, accessd, authend;
-private	string	errors;
+private	int			keep_alive;
+private object		accessd, authend;
+private	string		errors;
+private Application	app;
 
 #ifdef DEBUG_COST
 private int		ticks_reqgen;			/* Cost for last request */
 #endif
 
-static	object	create_request(string str);
+static Request	create_request(string str);
 
 
 /**
@@ -70,19 +71,19 @@ static void create(int clone)
  * Note: The application can change at any given time, objects should always
  *	   use get_application() to retrieve a user's application if they need
  *	   it.
- * Args: object application
+ * Args: Application application
  * Rets: n/a
  */
-void set_application(object o)
+void set_application(Application o)
 {
-	if(previous_program() != HTTP_USER && previous_object() != server) {
+	if(previous_program() != HTTP_USER && (Httpd)previous_object() != server) {
 		error("illegal call");
 	}
 	app = o;
 }
 
 
-static int call_method(object request, object response)
+static int call_method(Request request, Response response)
 {
 	if(app->get_allowed_method( request->get_command() )) {
 		return ::call_method(request, response);
@@ -93,15 +94,15 @@ static int call_method(object request, object response)
 
 /**
  * Name: create_response()
- * Desc: Create a response object from the request.
+ * Desc: Create a response from the request.
  * Note: n/a
  * Args: request object
- * Rets: A response-object (or nil and no response is sent).
+ * Rets: A response (or nil and no response is sent).
  */
-static object create_response(object request)
+static Response create_response(Request request)
 {
-	object	response;
-	string	file, cmd;
+	Response response;
+	string file, cmd;
 
 	response = new_object(HTTP_RESPONSE);
 	response->set_status(200);
@@ -171,7 +172,7 @@ string get_name()
  * Args:
  * Rets:
  */
-object get_application()
+Application get_application()
 {
 	return app;
 }
@@ -214,7 +215,7 @@ int has_error()
  * Args:
  * Rets:
  */
-nomask int send_headers(object response)
+nomask int send_headers(Response response)
 {
 	string data;
 	int status;
@@ -268,7 +269,7 @@ nomask int send_headers(object response)
 }
 
 
-nomask int send_content(object response, string data)
+nomask int send_content(Response response, string data)
 {
 	/* Only user's tools should be able to call this */
 	if(!is_tool(previous_object())) {
@@ -291,6 +292,7 @@ nomask int send_content(object response, string data)
 
 /**
  * Masked event-function
+ * Queried by the event-library, obj can be -any- type of object.
  */
 nomask int can_subscribe(object obj, string name)
 {
@@ -308,7 +310,8 @@ nomask int can_subscribe(object obj, string name)
 static int receive_request(string request_string)
 {
 	int ret;
-	object request, response;
+	Request request;
+	Response response;
 	string hostname;
 
 #ifdef DEBUG_COST
@@ -342,7 +345,7 @@ static int receive_request(string request_string)
 		set_application(server->get_application("", get_port()));
 	}
 
-	/* create a request object */
+	/* create a request */
 	request = create_request(request_string);
 	if(request == nil) {
 #ifdef DEBUG_WARNINGS
@@ -364,7 +367,7 @@ static int receive_request(string request_string)
 			);
 #endif
 	
-	/* create a response object */
+	/* create a response */
 	response = create_response(request);
 	app->http_log(request, response);
 	if(response == nil) {
@@ -402,9 +405,9 @@ static int receive_request(string request_string)
  * it now does some magic if if the command is a POST. How can we get 
  * around this?
  */
-static object create_request(string str)
+static Request create_request(string str)
 {
-	object request;
+	Request request;
 	string	cmd, ruri, ver, head, file, authstr, tmp;
 
 	request = new_object(HTTP_REQUEST);
@@ -479,7 +482,7 @@ static object create_request(string str)
 			|| cmd == "POST") {
 		int len;
 		string content;
-		object ob;
+		Content ob;
 	
 		if(request->get_header("Content-Length")) {
 			len = (int)request->get_header("Content-Length");

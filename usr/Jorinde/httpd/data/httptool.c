@@ -46,7 +46,7 @@ static void create(varargs int clone)
  * Args:
  * Rets:
  */
-int cmd_head(object request, object response)
+int cmd_head(Request request, Response response)
 {
 	if(!OWNER()) {
 		error("illegal call\n");
@@ -72,7 +72,7 @@ int cmd_head(object request, object response)
  * Args:
  * Rets:
  */
-int cmd_options(object request, object response)
+int cmd_options(Request request, Response response)
 {
 	if(!OWNER()) {
 		error("illegal call\n");
@@ -111,7 +111,7 @@ int cmd_options(object request, object response)
  * Args:
  * Rets:
  */
-int cmd_put(object request, object response)
+int cmd_put(Request request, Response response)
 {
 	int offset, length;
 
@@ -158,7 +158,7 @@ int cmd_put(object request, object response)
  * Args:
  * Rets:
  */
-int cmd_delete(object request, object response)
+int cmd_delete(Request request, Response response)
 {
 	if(!OWNER()) {
 		error("illegal call\n");
@@ -185,7 +185,7 @@ int cmd_delete(object request, object response)
  * Args:
  * Rets:
  */
-int cmd_trace(object request, object response)
+int cmd_trace(Request request, Response response)
 {
 	if(!OWNER()) {
 		send(response, TRUE, FALSE);
@@ -210,9 +210,10 @@ int cmd_trace(object request, object response)
  * Args:
  * Rets:
  */
-int cmd_get(object request, object response)
+int cmd_get(Request request, Response response)
 {
-	object	app, uri;
+	Application	app;
+	Uri			uri;
 	mixed	**list;
 	string	str;
 	
@@ -356,7 +357,7 @@ int cmd_get(object request, object response)
  * Args:
  * Rets:
  */
-int cmd_post(object request, object response)
+int cmd_post(Request request, Response response)
 {
 	if(!OWNER()) {
 		error("illegal call\n");

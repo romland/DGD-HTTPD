@@ -14,8 +14,8 @@
 inherit user	SYS_LIB_USER;
 inherit events  LIB_EVENTS;
 
-private object	pending;		/* pending incoming content */
-static object	server;
+private Content	pending;		/* pending incoming content */
+static Httpd	server;
 private int     con_count, port;
 private string  first_line;
 private string  ip_name, ip_number;
@@ -24,8 +24,8 @@ private int     ttl_handle;
 static  int     receive_pending(string str);
 
 /* TODO: HACK: These two functions must be implemented in parent */
-static	object	create_response(object request);
-static  int     call_method(object request, object response);
+static	Response	create_response(Request request);
+static  int			call_method(Request request, Response response);
 
 
 static void create()
@@ -35,8 +35,8 @@ static void create()
 	user::create();
 }
 
-static void set_server(object ob)	{ server = ob; } 
-object get_server()					{ return server; }
+static void set_server(Httpd ob)	{ server = ob; } 
+Httpd get_server()					{ return server; }
 
 
 void set_port(int a)
@@ -219,7 +219,7 @@ static int pending_content()
 /* TODO: Bad name, should be consistent and rename most of the things
  * related to 'pending' and 'incoming' and possibly also 'trailing'.
  */
-static object set_incoming()
+static Content set_incoming()
 {
 	pending = new_object(HTTP_CONTENT);
 	return pending;
@@ -291,7 +291,8 @@ static int receive_pending(string str)
 	}
 
 	if(pending->get_complete() == TRUE) {
-		object request, response;
+		Request request;
+		Response response;
 
 		request = pending->get_request();
 		request->clear_content();
