@@ -99,6 +99,12 @@ private int examine_result(object* tests)
 "\t\t|\n";
 		}
 		msg += 
+"\t       \t+---------------------------------------" + "+\n" +
+"\t\t| A test failed! Now, if you are not a  |\n" +
+"\t\t| developer, just rename or remove the  |\n" +
+"\t\t| offending file so that the test is not|\n" +
+"\t\t| performed on startup of DGD. (Then    |\n" +
+"\t\t| just hope for the best)               |\n"+
 "\t       \t'---------------------------------------" + "'\n\n";
 		SYSLOG(msg);
 	} else if(!_silent) {
