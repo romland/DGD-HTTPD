@@ -85,6 +85,8 @@ static void set_ttl(int seconds)
 #else
 	ttl_handle = call_out("disconnect", seconds);
 #endif
+	SYSLOG("set_ttl(): TTL is " + seconds + 
+			" sec [handle: " + ttl_handle + "]\n");
 }
 
 
@@ -112,8 +114,10 @@ int login(string str, varargs mixed pass_on)
 {
 	/* __IGOR__ compat problem, need to check if we have a previos ob */
 	if(previous_program() != LIB_CONN && previous_object()) {
+		SYSLOG("Warning: No previous object, disconnecting.\n");
 		return MODE_DISCONNECT;
 	}
+
 # if 1
 	if(pass_on) {
 		SYSLOG("passing " + str + " on...\n");
@@ -125,6 +129,7 @@ int login(string str, varargs mixed pass_on)
 	if(con_count == 0) {
 		user::login( nil );
 	}
+
 	con_count++;
 	first_line = str;
 
@@ -145,6 +150,7 @@ int login(string str, varargs mixed pass_on)
 void logout(int quit)
 {
 	SYSLOG("buff_user->logout(" + quit + "): " + ip_number + "\n");
+
 	if(previous_program() == LIB_CONN && --con_count == 0) {
 #if 0
 		if (query_conn()) {
@@ -159,6 +165,8 @@ void logout(int quit)
 #endif
 		::logout();
 		destruct_object(this_object());
+	} else {
+		SYSLOG("buff_user: Illegal call to logout()\n");
 	}
 }
 

@@ -45,7 +45,7 @@ string cookies_tostring()
 		x = "";
 		indices = map_indices(cookies);
 		for(i = 0; i < sizeof(indices); i++) {
-			x += "Set-Cookie: " + cookies[indices[i]]->tostring() + "\n";
+			x += "Set-Cookie: " + cookies[indices[i]]->tostring() + "\r\n";
 		}
 		return x;
 	}

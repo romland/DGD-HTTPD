@@ -130,7 +130,7 @@ string status_tostring()
 {
 	return (status ? 
 			app->http_status_string(status) : app->http_status_string(503)
-	) + "\n";
+	) + "\r\n";
 }
 
 int get_status_group(mixed val)

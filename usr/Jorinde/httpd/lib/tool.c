@@ -7,6 +7,7 @@
 # include "../include/www.h"
 
 inherit tool LIB_HTTP_BUFF_TOOL;
+inherit LIB_DATE;
 
 private mapping methods;
 private string plugin_name, plugin_version;

@@ -108,7 +108,12 @@ static object create_response(object request)
 							datetime(time(), app->get_timezone())
 						);
 	response->set_header("Content-Length", 0);
+#ifndef __LAST_MODIFIED_FIX__
 	response->set_header("Last-Modified", ctime(time()));
+#else
+	response->set_header("Last-Modified", 
+			datetime(time(), app->get_timezone()));
+#endif
 	response->set_request(request);
 
 	if(app->get_session_tracking()) {
@@ -308,12 +313,20 @@ static int receive_request(string request_string)
 
 	ret = MODE_NOCHANGE;
 
-	/* Get which application to use (as early as possible) */
+	/*
+	 * XXX TODO:
+	 * This is a HACK; it can probably be exploited in a number of ways!
+	 * But we DO want to know which application to use (as early as possible).
+	 * Must figure out a way to fix so that we can set headers in the request
+	 * object at this point. Or alternatives?
+	 */
 	if(sscanf(request_string, "%*sHost: %s\r\n%*s", hostname) == 3) {
+
 		if(index_of(0, hostname, ":") != -1) {
 			/* *sigh* Ugly fix. */
 			hostname = explode(hostname, ":")[0];
 		}
+
 		set_application(server->get_application(hostname, get_port()));
 	} else {
 		set_application(server->get_application("", get_port()));
@@ -347,12 +360,13 @@ static int receive_request(string request_string)
 		SYSLOG("user->receive_request(), response is nil\n");
 	} else {
 		if(call_method(request, response) == FALSE) {
-			ret = MODE_DISCONNECT;
 			SYSLOG("call_method failed; disconnecting\n");
+			ret = MODE_DISCONNECT;
 		}
 	}
 
 	if(!keep_alive && response->contents_buffered() == FALSE) {
+		SYSLOG("receive_request(): no keep-alive nor buffered data. Bye.\n");
 		ret = MODE_DISCONNECT;
 	}
 
@@ -375,11 +389,13 @@ static object create_request(string str)
 
 	request = new_object(HTTP_REQUEST);
 
-	/* note no \r in sscanf */
-	if(!str || sscanf(str, "%s %s HTTP/%s\n%s", cmd, ruri, ver, head) != 4) {
-		request->set_badrequest(TRUE);
-		return request;
-	} 
+	if(!str||sscanf(str, "%s %s HTTP/%s\r\n%s", cmd, ruri, ver, head) !=4 ) {
+		if(sscanf(str, "%s %s HTTP/%s\n%s", cmd, ruri, ver, head) != 4) {
+			request->set_badrequest(TRUE);
+			SYSLOG("create_request(): Bad request?\n");
+			return request;
+		}
+	}
 
 	request->set_headers(head);
 	request->set_command(cmd);
@@ -396,9 +412,11 @@ static object create_request(string str)
 	if(ver == "1.1" && request->get_header("Host") == nil) {
 		request->set_badrequest(TRUE);
 		return request;
+
 	} else if(request->get_header("Host") == nil) {
 		/* Cheating, but we always want a Host header. */
 		request->set_header("Host", "");
+
 	} else if(index_of(0, request->get_header("Host"), ":") != -1) {
 		/* *sigh* Ugly fix. 
 		 * TODO: This will not work under INET6
@@ -415,15 +433,19 @@ static object create_request(string str)
 		keep_alive = FALSE;
 	}
 
+	SYSLOG("connection head: " + (tmp?tmp:"")  + 
+		   " [keep-alive: " + keep_alive + "]\n");
+
 	/* Authenticate user (if any) authenticate() returns user to log in */
 	if(request->get_header("Authorization") && get_name() == HTTP_ANON_USER &&
 				(authstr = authend->authenticate(request)) && strlen(str)) {
-SYSLOG("logging in '" + authstr + "'...\n");
+		SYSLOG("logging in '" + authstr + "'...\n");
 		user::login( authstr, 1 );
-SYSLOG("logged in name is: " + query_name() + "\n");
+		SYSLOG("logged in name is: " + query_name() + "\n");
 		request->set_header("Authorization", "[secret]");
 		request->set_authenticated( get_name() ? get_name() : "" );
 		clone_tools();
+		
 	} else if(commandcount() == 0) {
 		clone_tools();
 	}
@@ -477,8 +499,10 @@ int receive_message(string str)
 {
 	string initial_req;
 
-	/* TODO: SECURITY: checking whether previous_program() != 0 is Igor compat,
-	 * is this okay elsewhere and/or on Igor? Really?
+	/*
+	 * SECURITY:
+	 * Is there a way to have previous_program() set to nil? If yes, this
+	 * is a terrible security hole.
 	 */
 	if(previous_program() && previous_program() != LIB_CONN) {
 		error("illegal call");
