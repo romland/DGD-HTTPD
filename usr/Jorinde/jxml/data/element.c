@@ -25,7 +25,7 @@ inherit iter LIB_ITERATOR;
 private object	*contents;
 private int		_type;
 
-void create()
+void create(varargs int clone)
 {
 	iter::create();
 	tag::create();

@@ -1,0 +1,45 @@
+The Mediahandlers
+
+Setting up a mediahandler
+	To add a new mediahandler to the httpd you need to add a hook in the 
+	applications configuration file.
+	By default this is: ~Jorinde/httpd/config/default-app.xml
+
+	For a module formatting .txt files to more readable html, you might 
+	add something like this:
+
+		<media-type>
+			<file-suffix>txt</file-suffix>
+			<content-type>text/plain</content-type>
+			<handler>
+				<program>/usr/Jorinde/plugins/mh/txt2html</program>
+			</handler>
+		</media-type>
+
+	/media-type/handler/program/ is the actual program that the functions
+	below will be called in. The rest of the XML should be self-explanatory.
+
+
+The API used to talk to Mediahandler Plugins
+
+	You need to inherit the mediahandler API and library by doing something
+	like the following in your plugin:
+
+	inherit api API_HTTP_MEDIAHANDLER;
+	inherit lib LIB_HTTP_MEDIAHANDLER;
+
+	Then a few functions are expected, these are outlined below.
+
+	int get_supports(string filesuffix)					[mandatory]
+		Gets called before anything else, the httpd verifies that the plugin
+		indeed supports the filesuffix. Should return TRUE (1) if it can
+		handle the mediatype. FALSE otherwise.
+
+	int handle(object request, object response)			[mandatory]
+		Handle the content in the response and modify as you see fit. You 
+		have full access to headers, content, the originating request.
+
+
+Disclaimer
+	There is more functionality available, but this is the basics.
+

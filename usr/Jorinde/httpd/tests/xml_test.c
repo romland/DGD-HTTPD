@@ -33,7 +33,7 @@ void teardown()
 void testInit()
 {
 	assert_true( 
-			doc->parseXML(read_file(JORINDE_HTTPD+"tests/support/data.xml"))
+			doc->loadXML(JORINDE_HTTPD+"tests/support/data.xml")
 		);
 	assert_notnil(doc);
 	assert_true( doc->isRoot() );

@@ -99,7 +99,7 @@ static void create(varargs int clone)
 
 	/* Load configuration */
 	config = (JXMLROOTD)->new();
-	config->parseXML(read_file(JORINDE_HTTPD_CONFIG_DIR + "server.xml"));
+	config->loadXML(JORINDE_HTTPD_CONFIG_DIR + "server.xml");
 
 	if(!config) {
 		error("Could not load httpd configuration\n");
@@ -131,8 +131,8 @@ static void create(varargs int clone)
 
 		/* Get application configuration */
 		appconfig = (JXMLROOTD)->new();
-		appconfig->parseXML(read_file(
-				JORINDE_HTTPD_CONFIG_DIR + elt->getAttribute("config-file"))
+		appconfig->loadXML(
+				JORINDE_HTTPD_CONFIG_DIR + elt->getAttribute("config-file")
 			);
 
 		if(!sizeof(appconfig->xpath("application"))) {

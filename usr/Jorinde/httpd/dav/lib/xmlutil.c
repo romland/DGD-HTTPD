@@ -1,5 +1,8 @@
 /* TODO: Rename this file so that it's not confused with the shared lib.
  * TODO: Add (c) header
+ *
+ *
+ * TODO: Make these function static?
  */
 
 # include "../include/dav.h"
@@ -7,9 +10,9 @@
 inherit "../../lib/xmlutil";
 #endif
 
-object new_xmldoc()
+static object new_xmldoc()
 {
-	return (JXMLROOTD)->new();
+	return new_object( DAV_HOME + "data/davxmlroot" );
 }
                                                                                 
 object new_node(string name, varargs string xmlns)
