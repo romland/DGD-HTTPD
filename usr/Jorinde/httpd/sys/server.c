@@ -20,7 +20,7 @@ inherit LIB_XML_UTIL;
 
 static mapping status, applications, default_apps;
 static string *plugins;
-static int timeout, keep_alive_time;
+static int timeout, keep_alive_time, started;
 static object accessd, authend, binaryd, logd;
 string get_server_string();
 
@@ -30,6 +30,7 @@ static void create(varargs int clone)
 	object *elts, elt, config;
 	mixed *ports;
 	
+	started = FALSE;
 	props::create();
 	default_apps = ([ ]);
 	binaryd = find_object(SYS_BINARYD);
@@ -102,7 +103,8 @@ static void create(varargs int clone)
 	config->loadXML(JORINDE_HTTPD_CONFIG_DIR + "server.xml");
 
 	if(!config) {
-		error("Could not load httpd configuration\n");
+		SYSLOG("Jorinde httpd server could not find configuration.\n");
+		return;
 	}
 
 	/* Set misc properties */
@@ -126,7 +128,9 @@ static void create(varargs int clone)
 		}
 
 		if(i >= sizeof(ports)) {
-			error("binding to port "+elt->getAttribute("port")+" failed");
+			SYSLOG("Jorinde httpd could not bind port " + 
+					elt->getAttribute("port") + "\n");
+			continue;
 		}
 
 		/* Get application configuration */
@@ -136,8 +140,13 @@ static void create(varargs int clone)
 			);
 
 		if(!sizeof(appconfig->xpath("application"))) {
-			error("invalid configuration: " + JORINDE_HTTPD_CONFIG_DIR + 
-					elt->getAttribute("config-file"));
+			SYSLOG("Invalid configuration: " + JORINDE_HTTPD_CONFIG_DIR + 
+					elt->getAttribute("config-file") + ", bailing.");
+			/*
+			 * Note that this is -fatal- for the server,
+			 * we return without starting server.
+			 */
+			return;
 		}
 
 		hostname = appconfig->xpath("application/hostname")[0]->getValue() +
@@ -178,11 +187,13 @@ static void create(varargs int clone)
 	}
 
 	if(sizeof(plugins) == 0) {
-		error("no method plugins in server.xml");
+		SYSLOG("no method plugins in Jorinde httpd's server.xml, bailing");
+		return;
 	}
 
 	if(binaryd == nil) {
-		error("no binary manager found");
+		SYSLOG("no binary manager for Jorinde httpd found, bailing");
+		return;
 	}
 
 	binaryd->init_httpd(timeout, applications);
@@ -193,7 +204,9 @@ static void create(varargs int clone)
 		authend->xml_parameter( "authentication", 
 							elts[0]->xpath( "program" )[0]->getCleanValue() );
 	} else {
-		error("no authentication daemon in server.xml");
+		SYSLOG("no authentication daemon for Jorinde httpd in server.xml, " + 
+			   "bailing");
+		return;
 	}
 
 	accessd = find_object( HTTP_AUTHORIZE );
@@ -202,7 +215,9 @@ static void create(varargs int clone)
 		accessd->xml_parameter( "authorization", 
 							elts[0]->xpath( "program" )[0]->getCleanValue() );
 	} else {
-		error("no authorization daemon in server.xml");
+		SYSLOG("no authorization daemon for Jorinde httpd in server.xml, " + 
+			   "bailing");
+		return;
 	}
 
 	logd = find_object( HTTP_LOGD );
@@ -211,9 +226,11 @@ static void create(varargs int clone)
 		logd->xml_parameter( "logging", 
 							elts[0]->xpath( "program" )[0]->getCleanValue() );
 	} else {
-		error("no logger daemon in server.xml");
+		SYSLOG("no logger daemon for Jorinde httpd in server.xml, bailing");
+		return;
 	}
 
+	started = TRUE;
 	LOG(get_server_string() + " started");
 }
 
@@ -289,6 +306,14 @@ object get_authentication_server()
 	return authend;
 }
 
+/*
+ * The started flag indicates whether the server was successfully started
+ * or not.
+ */
+int is_started()
+{
+	return started;
+}
 
 /* This is not used AFAIK */
 object get_logging_server()

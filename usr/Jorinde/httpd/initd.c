@@ -42,7 +42,11 @@ static void create(varargs int clone)
 
 	/* Done initializing */
 	server = find_object(HTTP_SERVER);		/* ... keep reference to this */
-	SYSLOG(server->get_server_string() + " started.\n");
+	if(server->is_started()) {
+		SYSLOG(server->get_server_string() + " started.\n");
+	} else {
+		SYSLOG("Jorinde httpd did not start, see preceeding messages.\n");
+	}
 }
 
 
