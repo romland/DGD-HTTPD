@@ -28,9 +28,23 @@ static string datetime(mixed arg, varargs string zone)
 	if(typeof(arg) == T_STRING && strlen(arg) != 24) {
 		return arg;
 	}
+
 	x = ( (typeof(arg)==T_INT) ? ctime(arg) : arg );
-	x = x[0..2] + ", " + x[8..9] + "-" + x[4..6] + "-" + x[20..23] + " "
-		+ x[11..18] + "" + (zone ? zone : "");
+#if 0
+	x = x[0..2]		+ ", "	+ 
+		x[8..9]		+ "-"	+ 
+		x[4..6]		+ "-"	+ 
+		x[20..23]	+ " "	+
+		x[11..18]	+ ""	+ 
+		(zone ? zone : "");
+#else
+	x = x[0..2]		+ ", "	+ 
+		x[8..9]		+ " "	+ 
+		x[4..6]		+ " "	+ 
+		x[20..23]	+ " "	+
+		x[11..18]	+ ""	+ 
+		(zone ? zone : "");
+#endif
 	return x;
 }
 

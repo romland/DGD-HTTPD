@@ -14,6 +14,8 @@
 # define OBJECTD                    USR_SYSTEM+"objectd/sys/objectd"
 # define OBJECTD_WRAP               USR_SYSTEM+"objectd/sys/objectdwrap"
                                                                                 
+# define __LAST_MODIFIED_FIX__
+
 /*
  * Define this if you want to test the indexing crap :)
  */
