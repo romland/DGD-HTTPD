@@ -21,7 +21,7 @@ mixed get_previous()	{ error("deprecated, use previous()"); }
 
 static void create(varargs int clone)
 {
-	owner = previous_object();
+	owner = previous_object(CREATE_PREV_OBJ);
 	index = -1;
 }
 
@@ -49,8 +49,7 @@ int index()
 
 mixed next()
 {
-	return (index < owner->Iter_size()-1) ? 
-			owner->Iter_get(++index) : nil;
+	return (index < (owner->Iter_size()-1)) ? owner->Iter_get(++index) : nil;
 }
 
 
