@@ -25,8 +25,8 @@
 
 #ifdef SYSLOG	/* undef SYSLOG() for XML */
 # undef SYSLOG
-# define SYSLOG(x)	(JORINDE_XML+"sys/logd")->syslog(x)
 #endif
+#define SYSLOG(x)	(JORINDE_XML+"sys/logd")->syslog(x)
 
 #ifndef LIB_HTTP_STRING
 # define LIB_HTTP_STRING	JORINDE_SHARED + "lib/string"

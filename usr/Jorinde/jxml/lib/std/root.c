@@ -7,16 +7,16 @@
 # define LOG_LEVEL_INFO
 # define LOG_LEVEL_WARN
 # define LOG_LEVEL_ERROR
+
+# include <type.h>
 # include "../../include/log.h"
 # include "../../include/xml.h"
-# include <type.h>
 
 #ifdef __IGOR__
 inherit "/lib/lwo";
 #endif
 
 inherit tag "./tag";
-inherit att "./attributes";
 inherit ser "./serialize";
 inherit par "./parse";
 inherit dom "./dom";
@@ -30,7 +30,6 @@ private int		_type;
 void constructor()
 {
 	tag::constructor();
-	att::constructor();
 	ser::constructor();
 	dom::constructor();
 
@@ -65,6 +64,7 @@ object *getContents()
 void setContents(object *o)
 {
 	contents = o;
+	propagateNamespace( ({ o }) );
 }
 
 void addContents(mixed o)
@@ -73,6 +73,7 @@ void addContents(mixed o)
 		error("root allowed one node only\n");
 	} else if(typeof(o) == T_OBJECT) {
 		contents += ({ o });
+		propagateNamespace( ({ o }) );
 	} else {
 		error("not an object");
 	}

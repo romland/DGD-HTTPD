@@ -23,6 +23,7 @@ private object *element_index;
 
 private mixed process(object fragment);
 
+
 private object new_lwo(string name)
 {
 	return new_object(XML_LWO_DIR + name);
@@ -221,7 +222,7 @@ private object tag_element(object fragment)
 {
 	/* init temporary variables */
 	int close, empty, nextspace, current;
-	string starttag, attribs, name;
+	string starttag, attribs, name, namespace;
 	string fragmentstr;
 	object contents;
 
@@ -252,7 +253,20 @@ private object tag_element(object fragment)
 	
 	current = fragment->getFragglesSize();
 	fragment->setFraggle(current, create_element());
-	fragment->getFraggleByIndex(current)->setName(strip_whitechars(name));
+
+	/*
+	 * XML namespace implementation.
+	 * Side-effect, if name is used in if(!empty) { ... } below, it will
+	 * have stripped all white space (this is new; and it might have been
+	 * a bug prior to today).
+	 * //JR, 17jan2005
+	 */
+	name = strip_whitechars(name);
+	if(sscanf(name, "%s:%s", namespace, name) == 2) {
+		fragment->getFraggleByIndex(current)->setNamespace(namespace);
+	}
+
+	fragment->getFraggleByIndex(current)->setName(name);
 
 	if(strlen(attribs) > 0) {
 		fragment->getFraggleByIndex(current)

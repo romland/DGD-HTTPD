@@ -17,7 +17,6 @@ inherit "/lib/lwo";
 #endif
 
 inherit tag "../lib/std/tag";
-inherit att "../lib/std/attributes";
 inherit ser "../lib/std/serialize";
 inherit dom "../lib/std/dom";
 inherit iter LIB_ITERATOR;
@@ -34,7 +33,6 @@ void create(varargs int clone)
 void constructor(int uid)
 {
 	tag::constructor();
-	att::constructor();
 	ser::constructor();
 	dom::constructor();
 	
@@ -72,6 +70,7 @@ int getContentSize()
 void setContents(object *i)
 {
 	contents = i;
+	propagateNamespace(i);
 }
 
 object *getContents()
@@ -79,6 +78,7 @@ object *getContents()
 	if(!contents) {
 		return ({ });
 	}
+
 	return contents + ({ });
 }
 
@@ -86,8 +86,10 @@ void addContents(mixed o)
 {
 	if(typeof(o) == T_ARRAY) {
 		contents += o;
+		propagateNamespace( o );
 	} else if(typeof(o) == T_OBJECT) {
 		contents += ({ o });
+		propagateNamespace( ({ o }) );
 	} else {
 		error("not object or *object");
 	}

@@ -10,10 +10,11 @@
 inherit "../file";
 inherit "../log";
 inherit "../string";
+inherit att "./attributes";
 
 private mixed _value;
 private int _uid;
-private string _name, _typename;
+private string _name, _typename, _ns;
 
 /* function declarations */
 int getUid();
@@ -52,9 +53,52 @@ void create(varargs int clone)
 
 void constructor()
 {
+	att::constructor();
 	_typename = "";
 	_value = nil;
 }
+
+
+void setNamespace(string xmlns)
+{
+	if(!xmlns || !strlen(xmlns)) {
+		WARN("setNamespace(): Cannot set empty namespace");
+		return;
+	}
+
+#if 0
+	SYSLOG("tag.c: setNamespace() " + 
+			(this_object()->getName() ? this_object()->getName():"nameless") +
+			" -> " + xmlns + "\n");
+#endif
+	_ns = xmlns;
+}
+
+
+string getNamespace()
+{
+	return _ns;
+}
+
+
+/*
+ * For each node, go through and give them any namespace
+ * they might inherit from this object.
+ */
+static void propagateNamespace(object *o)
+{
+	string ns;
+
+	if((ns = getNamespace())) {
+		int i;
+		for(i = 0; i < sizeof(o); i++) {
+			if(o[i]->getNamespace() == nil && o[i]->getName()) {
+				o[i]->setNamespace(ns);
+			}
+		}
+	}
+}
+
 
 mixed getValue()
 {
@@ -94,7 +138,6 @@ void setValue(mixed v)
 	_value = v;
 }
 
-
 string getTypeName()
 {
 	if(_typename == "") {
@@ -109,23 +152,22 @@ void setTypeName(string s)
 	_typename = s;
 }
 
-void setName(string s)
+void setName(string s, varargs string xmlns)
 {
 	int i;
-#if 0
-	if((i = index_of(0, s, ":")) != -1) {
-		/* TODO: We need to implement support for XML namespaces. It's just
-		 * hacked together to get it to work with WebDAV now. If a name 
-		 * contains : we split the string and set first part as xmlns in an
-		 * attribute in the element and second part as name.
-		 */
-#if 0
-		SYSLOG("attr: " + s[0..i] + " - s: " + s[i+1..] + "\n");
-#endif
-		this_object()->setAttribute("xmlns", s[0..i]);
-		s = s[i+1..];
+
+	/* Keep track of namespace */
+	if(!xmlns && (i = index_of(0, s, ":")) != -1) {
+		_name = s[i+1..];
+		/* exclude : from name */
+		setNamespace(s[0..i-1]);
+		return;
+	} else if(xmlns && strlen(xmlns)) {
+		_name = s;
+		setNamespace(xmlns);
+		return;
 	}
-#endif
+
 	_name = s;
 }
 

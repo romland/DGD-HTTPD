@@ -23,6 +23,11 @@ inherit "../log";
 
 void constructor() { }
 
+private string getNs(object e)
+{
+	return (e->getNamespace() ? e->getNamespace() + ":" : "");
+}
+
 /*
  * XML serialization.
  *
@@ -33,8 +38,7 @@ void constructor() { }
  * TODO: On large trees DGD's max-string-size will be exceeded and 
  * throw an error, this should be fixed.
  */
-string
-xml(mixed args...)
+string xml(mixed args...)
 {
 	object *contents;
 	int i, closed;
@@ -75,7 +79,7 @@ xml(mixed args...)
 #ifdef INDENT
 			tag += TABS[0..(indent*TABSIZE)];
 #endif
-			tag += "<" + e->getName();
+			tag += "<" + getNs(e) + e->getName();
 			if(e->has_attributes()) {
 				tag += " " + e->attributesToString();
 			}
@@ -133,7 +137,7 @@ xml(mixed args...)
 #ifdef INDENT
 				str += TABS[0..(indent*TABSIZE)];
 #endif
-				str += "</" + e->getName() + ">\n";
+				str += "</" + getNs(e) + e->getName() + ">\n";
 			}
 		}
 	}

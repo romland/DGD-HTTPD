@@ -25,7 +25,6 @@ void constructor()
 	xpath::constructor();
 }
 
-
 /*
  * DOM manipulation, but this is not all, some DOM manipulation is available
  * in attributes.c which should be inherited by all nodes as well.

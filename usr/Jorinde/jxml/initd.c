@@ -7,6 +7,7 @@
 
 static void create(varargs int clone)
 {
+	COMPILE(JORINDE_XML+"sys/logd");
 	COMPILE(JORINDE_XML+"data/dummy");
 	COMPILE(JORINDE_XML+"data/cdata");
 	COMPILE(JORINDE_XML+"data/characterdata");

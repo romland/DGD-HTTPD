@@ -8,6 +8,6 @@ void syslog(mixed str) {
 #ifdef __IGOR__
 	write("XML-LOG " + str + "");
 #else
-	(JORINDE_HTTPD+"sys/logd")->syslog(x)
+	(JORINDE_HTTPD+"sys/logd")->syslog(str);
 #endif
 }

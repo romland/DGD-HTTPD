@@ -38,24 +38,41 @@ int matchAttribute(string name, mixed value)
 
 mixed getAttribute(string s)
 {
+	if(s == "xmlns") {
+		error("Deprecated. Use getNamespace() to get xmlns.");
+	}
+
 	return attributes[s];
 }
 
 
 void setAttribute(string name, mixed value)
 {
+	/* Remove any attribute called xmlns */
+	if(name == "xmlns") {
+		this_object()->setNamespace(value);
+		return;
+	}
+
 	attributes[name] = value;
 }
 
 
 void setAttributes(mapping map)
 {
+	/* Remove any attribute called xmlns */
+	if(map["xmlns"]) {
+		this_object()->setNamespace(map["xmlns"]);
+		map["xmlns"] = 0;
+	}
+
 	attributes = map;
 }
 
 
 mapping getAttributes()
 {
+	/* Note: xmlns attribute will -never- be in here */
 	return ([ ]) + attributes;
 }
 
@@ -65,6 +82,7 @@ string attributesToString()
 	string str;
 	str = "";
 
+	/* Note: xmlns attribute will -never- be in here */
 	if(map_sizeof(attributes)) {
 		mixed *keys;
 		int j;
