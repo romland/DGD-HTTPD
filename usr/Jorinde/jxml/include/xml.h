@@ -1,5 +1,8 @@
-# include <kernel/kernel.h>
 # include "../../open/jorinde.h"
+
+#ifndef __IGOR_GLUE__
+# include <kernel/kernel.h>
+#endif
 
 # define XML_DIR						JORINDE_XML
 # define XML_LWO_DIR					XML_DIR + "data/"
@@ -20,9 +23,9 @@
 # define COMPILE(s) if(!find_object(s)) compile_object(s);
 #endif
 
-/* TODO: Depends on HTTPD, not good */
-#ifndef SYSLOG
-# define SYSLOG(x)	(JORINDE+"httpd/sys/logd")->syslog(x)
+#ifdef SYSLOG	/* undef SYSLOG() for XML */
+# undef SYSLOG
+# define SYSLOG(x)	(JORINDE_XML+"sys/logd")->syslog(x)
 #endif
 
 #ifndef LIB_HTTP_STRING
