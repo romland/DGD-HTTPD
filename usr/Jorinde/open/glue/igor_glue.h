@@ -119,12 +119,6 @@
  */
 # define __CO_IS_VOID__
 
-
-/*
- * Define this if you want to test the indexing crap :)
-# define __TEST_INDEXD__
- */
-
 /*
  * These modes are used by the Kernel Library and I don't think they have
  * any real functionality on Igor but they are here to make things compile

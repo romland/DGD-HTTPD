@@ -44,20 +44,6 @@
  */
 # define CREATE_PREV_OBJ			0
 
-/*
- * Define this to enable tests on Phantasmal's objectd. I guess it could
- * easily be modified for other objectd's as well.
- */
-# define __HAVE_OBJECTD__
-# define OBJECTD					USR_SYSTEM+"objectd/sys/objectd"
-# define OBJECTD_WRAP				USR_SYSTEM+"objectd/sys/objectdwrap"
-
-/*
- * Define this if you want to test the indexing crap :)
- * /
-# define __TEST_INDEXD__
-*/
-
 # include "./independent.h"
 
 /*
