@@ -110,19 +110,30 @@ private object create_comment()
 }
 
 
+/*
+ * <!DOCTYPE feature [<!ENTITY ext1 SYSTEM "./feature.xml">]>
+ */
+private string process_entity(string entity)
+{
+	string path;
+
+	if(sscanf(entity, "%*sENTITY%*sSYSTEM%*s\"%s\"%*s", path) == 5) {
+		return this_object()->xml_readfile(path);
+	}
+	
+	return "<!-- We do not understand this entity (yet?) -->";
+}
+
+
 /**
- * 
+ * Added hack (hack because of the name of the function) to support 
+ * external entities. It's up to the Root object to implement security
+ * for reading files.
  */
 private string remove_prolog(string src)
 {
 	int start, close, dp;
-
-#if 0
-	/* this check was added on 07-may-2004 */
-	if(src == "") {
-		return src;
-	}
-#endif
+	string entity;
 
 	start = index_of(0, src, "<");
 	if(src[start..start+2] == "<?x" || src[start..start+2] == "<?X") {
@@ -130,15 +141,26 @@ private string remove_prolog(string src)
 		src = src[close+2..];
 	}
 
-	start = index_of(0, src, "<!DOCTYPE");
-	if(start != -1) {
+	/* 
+	 * TODO: This is dangerous, this can cause an infinite loop
+	 * since it will parse included entities when they've beem
+	 * read in. Need some kind of safety mechanism to detect this.
+	 */
+	while((start = index_of(0, src, "<!DOCTYPE")) != -1) {
 		close = index_of(start, src, ">") + 1;
 		dp = index_of(start, src, "[");
+
 		if(dp != -1 && dp < close) {
 			close = index_of(start, src, "]>") + 2;
+		} else {
+			error("missing [ after DOCTYPE");
 		}
-		src = src[close..];
+
+		/* strip tag and replace it with content of file */
+		entity = process_entity(src[start..close]);
+		src = src[0..start-1] + entity + src[close..];
 	}
+	
 	return src;
 }
 
@@ -385,6 +407,13 @@ private mixed process(object fragment)
 
 						endstr = fragment->getEnd();
 						tmp = strlen(endstr) + 3 - 1;
+
+						/* lame error-reporting, I know (TODO: HACK) */
+						if(strlen(fragmentstr) < tmp) { 
+							error("XML: " + this_object()->query_filename() +
+									": missing close-tag"); 
+						}
+						
 						if(fragmentstr[1..tmp] == ("/" + endstr + ">") ||
 						   strip_whitechars(fragmentstr[1..tmp]) == 
 						   ("/" + endstr)) {
@@ -418,8 +447,7 @@ private void reset_vars()
 
 
 /**
- * This is the entry point, and also the only non-private function in this
- * object, have fun. :-)
+ * Only non-private function in this file. Called by child.
  */
 static int parse(string src)
 {
@@ -433,7 +461,7 @@ static int parse(string src)
 	INFO("xml->parse()...");
 	src = strip_crlf(src);
 	src = remove_prolog(src);
-
+	
 	fragment = create_fragment();
 	fragment->setString(src);
 

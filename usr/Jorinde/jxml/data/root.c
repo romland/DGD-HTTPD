@@ -3,126 +3,49 @@
  * Version:     $Id$
  * License:     (c)2004 Joakim Romland, see doc/License
  */
-# define LOG_LEVEL_DEBUG
-# define LOG_LEVEL_INFO
-# define LOG_LEVEL_WARN
-# define LOG_LEVEL_ERROR
-# include "../include/log.h"
-# include "../include/xml.h"
-# include <type.h>
 
-#ifdef __IGOR__
-inherit "/lib/lwo";
-#endif
+/* 
+ * Note: Copy this file to your own directory so you have full control
+ *       over the root object's read_file() functionality, this is also
+ *       needed in order to support external entities.
+ */
+inherit root "../lib/std/root";
 
-inherit tag "../lib/std/tag";
-inherit att "../lib/std/attributes";
-inherit ser "../lib/std/serialize";
-inherit par "../lib/std/parse";
-inherit dom "../lib/std/dom";
+private string filename;
 
-private object	*index;
-private object	*contents;
-private int		_is_root;
-private int		_type;
+/* Can we get away with this? If not: External entities won't work in these */
+int parseXML(string source)	{ error("deprecated; use loadXML()"); }
+string query_filename()		{ return filename; }
 
-
-void constructor()
+string query_directory()
 {
-	tag::constructor();
-	att::constructor();
-	ser::constructor();
-	dom::constructor();
-
-	_type = XML_ROOT_NODE;
-	setName("ROOT");
-	_is_root = 1;
-	
-	index = ({ });
-	contents = ({ });
+	string *arr;
+	arr = explode(filename, "/");
+	return "/" + implode(arr[0..sizeof(arr)-2], "/");
 }
 
-void create(varargs int clone)
+/*
+ * This function is also used by the parser to read in external entities.
+ */
+static string xml_readfile(string file)
 {
-	constructor();
-}
-
-int getType()
-{
-	return  _type;
-}
-
-void setType(int type)
-{
-	_type = type;
-}
-
-object *getContents()
-{
-	return contents;
-}
-
-void setContents(object *o)
-{
-	contents = o;
-}
-
-void addContents(mixed o)
-{
-	if(typeof(o) == T_ARRAY) {
-		error("root allowed one node only\n");
-	} else if(typeof(o) == T_OBJECT) {
-		contents += ({ o });
-	} else {
-		error("not an object");
+	if(!strlen(file)) {
+		error("no filename set, can't check authorization");
 	}
-}
 
-void setIndex(object *i)
-{
-	index = i;
-}
-
-object *getIndex()
-{
-	return index;
-}
-
-int isRoot()
-{
-	return _is_root;
-}
-
-void setIsRoot(int a)
-{
-	_is_root = a;
-}
-
-/**
- * Basically the same as loadXML, except that you send the source of the
- * XML document as a string.
- */
-int parseXML(string source)
-{
-	return parse(source);
-}
-
-/**
- *
- */
-int loadXML(string filename)
-{
+	/* TODO: security checks! Is 'filename' is allowed to read 'file'? */
 	/* TODO: check if file exists */
 
-	if(strlen(filename) > 4 && filename[strlen(filename)-4..] != ".xml") {
-		ERROR("File does not have a .xml extension.");
+	if(strlen(file) > 4 && file[strlen(file)-4..] != ".xml") {
+		error("File does not have a .xml extension.");
 	}
 
-	parseXML( read_file(filename) );
-	return 1;
+	return read_file(file);
 }
 
-object iterator()
+
+int loadXML(string fn)
 {
-	error("xmlroot does not implement an iterator, it only has one child");
+	filename = fn;
+	return ::parseXML(xml_readfile(fn));
 }
