@@ -148,7 +148,18 @@ nomask string http_status_string(int val)
  */
 string default_document(string rel_path)
 {
-	/* TODO: All. See excerpt of function */
+	/* TODO: All. See excerpt of function
+	 *
+	 * What is expected of this function is to check the directory for 
+	 * candidates of default documents and decide which one should have
+	 * highest priority -- then return that.
+	 *
+	 * If NO default candidate could be found, return NULL. Callers of this
+	 * function must deal with this NULL and -not- redirect client. What
+	 * should happen is just a 404 (not found).
+	 *
+	 * All this is TODO.
+	 */
 	return default_docs[0];
 }
 
